@@ -761,6 +761,14 @@
             display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 0.85rem;
             border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 0.5rem; background: var(--bg-body);
         }
+
+        /* Polesan estetik Tugas Pro */
+        #tabTodo .ring.ring-complete .fill { stroke: var(--success); filter: drop-shadow(0 0 4px var(--success)); }
+        #tabTodo .ring.ring-complete { animation: ringPulse 1.6s ease-in-out infinite; }
+        @keyframes ringPulse { 0%,100% { transform: rotate(-90deg) scale(1); } 50% { transform: rotate(-90deg) scale(1.06); } }
+        #tabTodo .task { transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+        #tabTodo .task:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+        #tabTodo #topAddBtn { background: linear-gradient(135deg, var(--accent), var(--accent-hover)) !important; box-shadow: 0 4px 12px hsla(var(--hue-primary), var(--sat-primary), 59%, 0.35); }
         .sync-field { padding: 0.75rem; border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 0.65rem; background: var(--bg-body); }
         .sync-field-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
         .sync-field-current { font-size: 0.7rem; color: var(--text-muted); }
@@ -787,6 +795,12 @@
         .adj-item-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
         .adj-item-actions button { background: var(--bg-surface-hover); border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; color: var(--text-muted); }
         .adj-item-actions button:hover { background: var(--border-light); }
+        .changelog-item { border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.75rem; background: var(--bg-body); }
+        .changelog-item.latest { border-color: var(--primary); background: var(--primary-light); }
+        .changelog-version { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .changelog-version .badge { background: var(--primary); color: white; }
+        .changelog-item ul { margin: 0; padding-left: 1.1rem; }
+        .changelog-item li { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.3rem; line-height: 1.4; }
         .fap-item {
             display: flex; gap: 0.75rem; align-items: center;
             border: 1px solid var(--border-light); border-radius: var(--radius-md);
@@ -1627,7 +1641,11 @@
                         <div class="form-group"><label>Sampai</label><input type="date" id="repDateTo" onchange="App.UI.renderReport()"></div>
                     </div>
                 </div>
-                <p class="text-xs text-muted font-semibold" id="repPeriodLabel" style="text-align:center;"></p>
+                <div id="repNavWrap" style="display:flex; align-items:center; justify-content:center; gap:0.75rem;">
+                    <button type="button" class="btn btn-icon" style="background:var(--bg-body);" onclick="App.UI.shiftReportOffset(-1)">◀</button>
+                    <p class="text-xs text-muted font-semibold" id="repPeriodLabel" style="text-align:center; min-width:150px;"></p>
+                    <button type="button" class="btn btn-icon" style="background:var(--bg-body);" onclick="App.UI.shiftReportOffset(1)">▶</button>
+                </div>
             </div>
 
             <div id="repSummaryCards" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;"></div>
@@ -1754,6 +1772,15 @@
                 <h2 class="section-title">📊 Rencana vs Realisasi (6 Bulan)</h2>
                 <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAllocTrend"></canvas></div>
             </div>
+
+            <div class="card">
+                <button type="button" onclick="App.UI.toggleAllocMonthlyReport()" style="width:100%; background:none; border:none; padding:0; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                    <span class="font-bold text-sm">📋 Laporan Akhir Bulan</span>
+                    <span id="allocMonthlyReportToggleIcon" class="text-muted" style="transition: transform 0.2s;">▾</span>
+                </button>
+                <p class="text-xs text-muted" style="margin-top:0.5rem;">Rekap tiap pos per bulan: alokasi, terpakai, dan sisanya.</p>
+                <div id="allocMonthlyReportList" style="display:none; margin-top:0.9rem;"></div>
+            </div>
         </main>
 
         <!-- 5. TAB SETTINGS -->
@@ -1848,7 +1875,10 @@
                     </div>
                 </div>
                 
-                <div style="text-align: center; margin-top: 2rem; opacity: 0.5;"><p class="text-xs font-bold" id="appVersionFooter">Keuangan Pro v8.6</p></div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="button" class="text-xs font-bold" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0.5rem;" onclick="App.UI.openChangelog()">📜 Lihat Riwayat Update</button>
+                    <p class="text-xs font-bold" id="appVersionFooter" style="opacity:0.5; margin-top:0.35rem;">Keuangan Pro v8.6</p>
+                </div>
             </div>
         </main>
 
@@ -2098,6 +2128,17 @@
                 <input type="checkbox" id="fapDontShowToday" style="accent-color:var(--primary); width:16px; height:16px; cursor:pointer; flex-shrink:0;">
                 <span class="text-xs text-muted">Jangan tampilkan lagi untuk hari ini</span>
             </label>
+        </div>
+    </div>
+
+    <!-- Riwayat Update / Changelog -->
+    <div id="changelogModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('changelogModal')">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h2>📜 Riwayat Update</h2>
+                <button class="modal-close" onclick="App.UI.closeModal('changelogModal')">&times;</button>
+            </div>
+            <div id="changelogList"></div>
         </div>
     </div>
 
@@ -2484,6 +2525,60 @@
                     { id: 'gift', name: 'Gift', icon: '🎁' }
                 ],
                 AccountIcons: { cash: '💵', saldo: '🪪' },
+                Changelog: [
+                    { version: 'v8.6', date: 'September 2026', items: [
+                        'Filter Riwayat sekarang bisa per sub-dompet spesifik (SeaBank, KromBank, GoPay, DANA, ShopeePay) atau semua Saldo',
+                        '2 tema baru: Biru Abu (slate) & Kuning Abu (stone/amber)',
+                        'Alokasi: Laporan Akhir Bulan per pos lengkap sisa/lebihnya',
+                        'Laporan: bisa geser bulan/minggu pakai tombol ◀ ▶',
+                        'Bersihin beberapa kalimat deskripsi yang dianggap gak perlu',
+                        'Footer versi dirapikan + halaman arsip update (ini!) ditambahkan'
+                    ]},
+                    { version: 'v8.5', date: 'Agustus 2026', items: [
+                        'Tab baru "Laporan": filter Bulanan/Mingguan/Custom, grafik pengeluaran harian (nunjukin tanggal paling boros), breakdown per kategori, export PDF proper (kop, tanggal terbit, tabel kategori & transaksi)',
+                        'Riwayat Penyesuaian Saldo dipisah jadi tombol mengambang di tab Riwayat, sekarang bisa diedit & dihapus',
+                        'Tab Alokasi: ringkasan total gabungan, donut chart pembagian pos, saran jatah harian sisa bulan berjalan',
+                        'Pemetaan kategori bisa dikecualikan total dari Alokasi ("Di Luar Budget")',
+                        'Kategori custom sekarang langsung kepake begitu app kebuka, gak perlu nambah transaksi dulu'
+                    ]},
+                    { version: 'v8.4', date: 'Agustus 2026', items: [
+                        'Tambah KromBank sebagai sub-dompet',
+                        'Hapus kategori Sekolah',
+                        'Notifikasi budget/transaksi otomatis: ada opsi "Jangan tampilkan lagi hari ini"',
+                        'Transfer antar sub-dompet Saldo (misal SeaBank ke GoPay) sekarang bisa',
+                        'Ikon sub-dompet disesuaikan sama logo aslinya (SeaBank, ShopeePay)'
+                    ]},
+                    { version: 'v8.3', date: 'Agustus 2026', items: [
+                        'Tab Alokasi Budget baru: pembagian 50/20/30 (Kebutuhan Pokok, Kuliah & Transport, Fleksibel & Hiburan)',
+                        'Transaksi bisa ditandai "Kecualikan dari Budget"'
+                    ]},
+                    { version: 'v8.2', date: 'Agustus 2026', items: [
+                        'Sub-dompet e-wallet (GoPay, DANA, ShopeePay, SeaBank) buat akun Saldo, rincian per dompet di Dashboard',
+                        'Transfer prioritas Saldo → Cash sebagai default',
+                        'Fitur Quick Respons: template transaksi cepat, sekali tap tinggal isi nominal',
+                        'Fitur Sinkronkan Saldo: rekonsiliasi saldo di app vs kenyataan',
+                        'Fitur Target Impian dihapus'
+                    ]},
+                    { version: 'v8.1', date: 'Juli 2026', items: [
+                        'Popup "Perlu Perhatian" pas buka app: alert budget hampir habis + konfirmasi transaksi otomatis sebelum beneran tercatat',
+                        'Transaksi otomatis (recurring) sekarang fleksibel: interval custom (misal tiap 3 bulan), tanggal mulai & berakhir'
+                    ]},
+                    { version: 'v8.0', date: 'Juli 2026', items: [
+                        'Detail transaksi di Riwayat nunjukin sisa saldo saat itu (cash & saldo terpisah, ada tombol rincian)',
+                        'Perbaikan bug perhitungan saldo yang gak sinkron sama transfer'
+                    ]},
+                    { version: 'v7.x', date: 'Juli 2026', items: [
+                        'Fitur Input Cepat dari Screenshot: baca mutasi otomatis dari galeri (OCR), bisa banyak sekaligus',
+                        'Perbaikan bug Tugas Pro: render crash pas data sync, drag-handle bikin tap gak kebaca di HP',
+                        'Sistem antrian notifikasi: popup gantian gak numpuk, 1x tampil per reload'
+                    ]},
+                    { version: 'v6.x', date: 'Juni 2026', items: [
+                        'Tugas Pro digabung jadi satu file sama Keuangan Pro',
+                        'Sistem tema custom: 6 preset (Klasik, Midnight, Sunset, Forest, Mono, Aurora)',
+                        'Fitur premium & sistem notifikasi push dihapus total, semua fitur gratis buat semua orang',
+                        'Intro video dihapus'
+                    ]}
+                ],
                 FreeLimits: { budget: 3, recurring: 3, historyMonths: 3 }
             },
 
@@ -3622,10 +3717,13 @@
                     const btnUpgradeRec = document.getElementById('btnUpgradeRec'); if(btnUpgradeRec) btnUpgradeRec.style.display = App.State.isPremium ? 'none' : 'block';
                 },
                 _reportPeriod: 'month',
+                _reportOffset: 0,
                 setReportPeriod(type) {
                     this._reportPeriod = type;
+                    this._reportOffset = 0;
                     ['Month', 'Week', 'Custom'].forEach(t => document.getElementById(`repPeriod${t}Btn`).classList.toggle('active', t.toLowerCase() === type));
                     document.getElementById('repCustomDateWrap').style.display = type === 'custom' ? 'block' : 'none';
+                    document.getElementById('repNavWrap').style.display = type === 'custom' ? 'none' : 'flex';
                     if (type === 'custom') {
                         const from = document.getElementById('repDateFrom'), to = document.getElementById('repDateTo');
                         if (!from.value) { const d = new Date(); d.setDate(d.getDate() - 6); from.value = d.toISOString().split('T')[0]; }
@@ -3633,10 +3731,14 @@
                     }
                     this.renderReport();
                 },
+                shiftReportOffset(dir) {
+                    this._reportOffset += dir;
+                    this.renderReport();
+                },
                 getReportDateRange() {
                     const now = new Date(); let start, end, label;
                     if (this._reportPeriod === 'week') {
-                        const day = now.getDay(); start = new Date(now); start.setDate(now.getDate() - (day === 0 ? 6 : day - 1)); start.setHours(0,0,0,0);
+                        const day = now.getDay(); start = new Date(now); start.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + (this._reportOffset * 7)); start.setHours(0,0,0,0);
                         end = new Date(start); end.setDate(start.getDate() + 6);
                         label = `${start.toLocaleDateString('id-ID',{day:'numeric',month:'short'})} — ${end.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}`;
                     } else if (this._reportPeriod === 'custom') {
@@ -3645,8 +3747,8 @@
                         end = toVal ? new Date(toVal + 'T00:00:00') : now;
                         label = `${start.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})} — ${end.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}`;
                     } else {
-                        start = new Date(now.getFullYear(), now.getMonth(), 1);
-                        end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        start = new Date(now.getFullYear(), now.getMonth() + this._reportOffset, 1);
+                        end = new Date(now.getFullYear(), now.getMonth() + this._reportOffset + 1, 0);
                         label = start.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
                     }
                     return { start, end, label };
@@ -3743,6 +3845,19 @@
                     if(id === 'admin' && App.State.isAdmin) App.Admin.loadData();
                 },
                 showModal(id) { document.getElementById(id).classList.add('show'); },
+                openChangelog() {
+                    const list = document.getElementById('changelogList');
+                    list.innerHTML = App.Config.Changelog.map((c, i) => `
+                        <div class="changelog-item ${i === 0 ? 'latest' : ''}">
+                            <div class="changelog-version">
+                                <span class="badge">${c.version}</span>
+                                <span class="text-xs text-muted">${c.date}</span>
+                                ${i === 0 ? '<span class="text-xs font-bold text-primary">Terbaru</span>' : ''}
+                            </div>
+                            <ul>${c.items.map(it => `<li>${it}</li>`).join('')}</ul>
+                        </div>`).join('');
+                    App.UI.showModal('changelogModal');
+                },
                 toggleRunningBalanceDetail() {
                     const el = document.getElementById('editRunningBalanceDetail');
                     if (el) el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
@@ -3930,6 +4045,39 @@
                         ]},
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, ticks: { callback: v => App.Utils.formatCurrency(v) } } } }
                     });
+                },
+                toggleAllocMonthlyReport() {
+                    const el = document.getElementById('allocMonthlyReportList'); const icon = document.getElementById('allocMonthlyReportToggleIcon');
+                    if (!el) return;
+                    const show = el.style.display === 'none' || !el.style.display;
+                    if (show) this.renderAllocMonthlyReport();
+                    el.style.display = show ? 'block' : 'none';
+                    if (icon) icon.style.transform = show ? 'rotate(180deg)' : 'rotate(0deg)';
+                },
+                renderAllocMonthlyReport() {
+                    const box = document.getElementById('allocMonthlyReportList'); if (!box) return;
+                    const now = new Date();
+                    let html = '';
+                    for (let i = 0; i <= 5; i++) {
+                        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const monthLabel = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                        const status = App.Handlers.getAllocationStatus(-i);
+                        const totalAlloc = status.reduce((s,x) => s + x.allocated, 0);
+                        const totalSpent = status.reduce((s,x) => s + x.spent, 0);
+                        const sisa = totalAlloc - totalSpent;
+                        const isCurrent = i === 0;
+                        html += `<div class="progress-card" style="margin-bottom:0.75rem;">
+                            <div class="progress-header">
+                                <div><div class="font-bold text-sm">${monthLabel} ${isCurrent ? '<span class="badge badge-active">Berjalan</span>' : ''}</div>
+                                <div class="text-xs text-muted">Terpakai ${App.Utils.formatCurrency(totalSpent)} dari ${App.Utils.formatCurrency(totalAlloc)}</div></div>
+                            </div>
+                            <div style="margin-top:0.6rem; padding-top:0.6rem; border-top:1px dashed var(--border-light);">
+                                ${status.map(s => `<div class="subwallet-item"><span class="subwallet-label">${s.icon} ${s.label}</span><span class="subwallet-value ${s.remaining<0?'text-danger':'text-success'}">${s.remaining<0?'Lebih '+App.Utils.formatCurrency(-s.remaining):'Sisa '+App.Utils.formatCurrency(s.remaining)}</span></div>`).join('')}
+                            </div>
+                            <div class="text-sm font-bold" style="margin-top:0.6rem; text-align:right; color:${sisa<0?'var(--danger)':'var(--success)'};">${sisa<0?`⚠️ Total lebih ${App.Utils.formatCurrency(-sisa)}`:`✅ Total sisa ${App.Utils.formatCurrency(sisa)}`}</div>
+                        </div>`;
+                    }
+                    box.innerHTML = html;
                 },
                 refreshStartupAlertPopup() {
                     const wasOpen = document.getElementById('financeAlertPopup').classList.contains('show');
@@ -4987,8 +5135,9 @@
     const doneN=base.filter(t=>t.done).length;
     const pct=base.length?doneN/base.length:0;
     $('#ring').style.setProperty('--pct',pct.toFixed(3));
+    $('#ring').classList.toggle('ring-complete', base.length > 0 && pct === 1);
     $('#progNum').textContent=Math.round(pct*100)+'%';
-    $('#progLbl').textContent=`${doneN}/${base.length} selesai`;
+    $('#progLbl').textContent = base.length === 0 ? 'Belum ada tugas' : (pct === 1 ? `🎉 ${doneN}/${base.length} beres semua!` : `${doneN}/${base.length} selesai`);
 
     if(list.length===0){ scroll.appendChild(emptyState()); icons(); bindEmptyCta(); return; }
 
