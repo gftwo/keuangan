@@ -965,6 +965,76 @@
         #installBanner .ib-btn { background: #6366f1; color: white; border: none; padding: 0.5rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background 0.2s; }
         #installBanner .ib-btn:hover { background: #4f46e5; }
         #installBanner .ib-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 1.1rem; cursor: pointer; padding: 0.25rem; flex-shrink: 0; line-height: 1; }
+
+        /* ==========================================================================
+           TAB KULIAH — jadwal, absensi, tugas kuliah
+           ========================================================================== */
+        .text-muted { color: var(--text-muted); }
+
+        .kp-week-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; }
+        .kp-week-label { font-weight: 700; font-size: 0.85rem; color: var(--text-main); text-align: center; flex: 1; }
+        .kp-week-btn { background: var(--bg-body); border: 1px solid var(--border-light); width: 36px; height: 36px; border-radius: var(--radius-full); cursor: pointer; font-size: 1.1rem; color: var(--text-main); flex-shrink: 0; transition: var(--transition-fast); }
+        .kp-week-btn:hover { background: var(--primary-light); border-color: var(--primary); }
+
+        .kp-day-strip { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.15rem; }
+        .kp-day-btn { flex: 1; min-width: 46px; display: flex; flex-direction: column; align-items: center; gap: 0.15rem; padding: 0.55rem 0.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); background: var(--bg-body); cursor: pointer; transition: var(--transition-fast); }
+        .kp-day-btn .kp-day-name { font-size: 0.62rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .kp-day-btn .kp-day-num { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
+        .kp-day-btn.is-today:not(.active) .kp-day-num { color: var(--primary); }
+        .kp-day-btn.active { background: var(--primary-gradient); border-color: transparent; }
+        .kp-day-btn.active .kp-day-name, .kp-day-btn.active .kp-day-num { color: #fff; }
+        .kp-day-btn .kp-day-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--primary); margin-top: 1px; opacity: 0; }
+        .kp-day-btn.has-class .kp-day-dot { opacity: 1; }
+        .kp-day-btn.active .kp-day-dot { background: #fff; }
+
+        .kp-class-card { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; background: var(--bg-body); border: 1px solid var(--border-light); border-left: 4px solid var(--primary); border-radius: var(--radius-md); margin-bottom: 0.75rem; }
+        .kp-class-card.is-libur { border-left-color: var(--text-light); opacity: 0.65; }
+        .kp-class-card.is-override { border-left-color: var(--warning); }
+        .kp-class-main { flex: 1; min-width: 0; }
+        .kp-class-title { font-weight: 700; font-size: 0.92rem; color: var(--text-main); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .kp-class-meta { display: flex; flex-wrap: wrap; gap: 0.6rem; font-size: 0.76rem; color: var(--text-muted); }
+        .kp-class-actions { display: flex; flex-direction: column; gap: 0.4rem; flex-shrink: 0; }
+        .kp-icon-btn { background: var(--bg-surface); border: 1px solid var(--border-light); width: 32px; height: 32px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: var(--transition-fast); }
+        .kp-icon-btn:hover { background: var(--bg-surface-hover); }
+
+        .kp-itabs { display: flex; gap: 0.4rem; }
+        .kp-itab { flex: 1; padding: 0.65rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); background: var(--bg-body); font-weight: 700; font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: var(--transition-fast); font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; }
+        .kp-itab.active { background: var(--primary-gradient); color: #fff; border-color: transparent; box-shadow: 0 4px 10px rgba(79,70,229,0.25); }
+        .kp-tab-badge { display: none; background: var(--danger); color: #fff; font-size: 0.62rem; font-weight: 800; padding: 0.05rem 0.4rem; border-radius: 99px; align-items: center; justify-content: center; }
+
+        .kp-empty { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.85rem; }
+
+        .kp-attend-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 0.7rem; flex-wrap: wrap; }
+        .kp-attend-info { flex: 1; min-width: 150px; }
+        .kp-attend-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+        .kp-attend-status { font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 99px; white-space: nowrap; }
+        .kp-status-hadir { background: var(--success-light); color: var(--success-dark); }
+        .kp-status-tidak { background: var(--danger-light); color: var(--danger-dark); }
+        .kp-status-libur { background: var(--bg-surface-hover); color: var(--text-muted); }
+
+        .kp-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.6rem; margin-bottom: 1.25rem; }
+        .kp-summary-box { background: var(--bg-body); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.85rem; text-align: center; }
+        .kp-summary-num { font-size: 1.35rem; font-weight: 800; color: var(--text-main); }
+        .kp-summary-lbl { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 0.15rem; letter-spacing: 0.3px; }
+
+        .kp-task-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 0.75rem; }
+        .kp-task-item.is-done { opacity: 0.6; }
+        .kp-task-item.is-done .kp-task-title { text-decoration: line-through; }
+        .kp-task-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-medium); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-top: 2px; transition: var(--transition-fast); background: var(--bg-surface); color: #fff; }
+        .kp-task-check.checked { background: var(--success); border-color: var(--success); }
+        .kp-task-title { font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.3rem; }
+        .kp-task-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.15rem; }
+        .kp-task-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem; }
+        .kp-task-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+        .kp-tag { font-size: 0.62rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; display: inline-block; }
+        .kp-tag-danger { background: var(--danger-light); color: var(--danger-dark); }
+        .kp-tag-warning { background: var(--warning-light); color: var(--warning-dark); }
+        .kp-tag-muted { background: var(--bg-surface-hover); color: var(--text-muted); }
+
+        .kp-scope-choice { display: flex; gap: 0.6rem; }
+        .kp-scope-opt { flex: 1; padding: 0.7rem; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); text-align: center; cursor: pointer; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); transition: var(--transition-fast); }
+        .kp-scope-opt.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
     </style>
     <style id="todoProStyles">
 #tabTodo {
@@ -2111,20 +2181,224 @@
 </div>
         </main>
 
-        <!-- 6. TAB KULIAH (placeholder — dilengkapi di tahap berikutnya) -->
+        <!-- 6. TAB KULIAH -->
         <main class="app-section" id="view-kuliah">
-            <div class="card text-center" style="padding: 3rem 1.5rem;">
-                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎓</div>
-                <h2 class="font-bold" style="margin-bottom: 0.5rem;">Tab Kuliah</h2>
-                <p class="text-sm text-muted">Sedang disiapkan: jadwal matkul, absensi, dan tugas kuliah.</p>
+            <div class="card" style="padding: 1.5rem;">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+                    <div>
+                        <h2 class="font-bold" style="margin-bottom: 0.15rem;">🎓 Kuliah</h2>
+                        <p class="text-sm text-muted" style="margin:0;">Jadwal, absensi, dan tugas kuliahmu dalam satu tempat.</p>
+                    </div>
+                    <span class="kp-tag kp-tag-muted" id="kpTotalSks" style="font-size:0.7rem;padding:0.35rem 0.7rem;">0 SKS / minggu</span>
+                </div>
+            </div>
+
+            <div class="card" style="padding:0.6rem;">
+                <div class="kp-itabs">
+                    <button type="button" class="kp-itab active" data-kptab="jadwal" onclick="KuliahPro.switchTab('jadwal', this)">🗓️ Jadwal</button>
+                    <button type="button" class="kp-itab" data-kptab="absensi" onclick="KuliahPro.switchTab('absensi', this)">📋 Absensi</button>
+                    <button type="button" class="kp-itab" data-kptab="tugas" onclick="KuliahPro.switchTab('tugas', this)">📝 Tugas<span class="kp-tab-badge" id="kpTaskTabBadge"></span></button>
+                </div>
+            </div>
+
+            <!-- ===== PANE: JADWAL ===== -->
+            <div class="kp-pane" id="kpPane-jadwal">
+                <div class="card">
+                    <div class="kp-week-nav">
+                        <button type="button" class="kp-week-btn" onclick="KuliahPro.shiftWeek(-1)">‹</button>
+                        <div class="kp-week-label" id="kpWeekLabel">-</div>
+                        <button type="button" class="kp-week-btn" onclick="KuliahPro.shiftWeek(1)">›</button>
+                    </div>
+                    <div class="kp-day-strip" id="kpDayStrip"></div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                        <h3 class="font-bold" id="kpSelectedDayLabel" style="margin:0;">Senin</h3>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="KuliahPro.openCourseModal()">+ Matkul</button>
+                    </div>
+                    <div id="kpScheduleList"></div>
+                </div>
+            </div>
+
+            <!-- ===== PANE: ABSENSI ===== -->
+            <div class="kp-pane" id="kpPane-absensi" style="display:none;">
+                <div class="card">
+                    <div class="form-group" style="margin-bottom:0.75rem;max-width:220px;">
+                        <label>Tanggal</label>
+                        <input type="date" id="kpAbsenDate">
+                    </div>
+                    <div id="kpAbsenToday"></div>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                        <h3 class="font-bold" style="margin:0;">📊 Rekap Kehadiran</h3>
+                        <select id="kpAbsenFilter" style="width:auto;min-width:160px;padding:0.5rem 2rem 0.5rem 0.85rem;font-size:0.82rem;"></select>
+                    </div>
+                    <div class="kp-summary-grid" id="kpAbsenSummary"></div>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead><tr><th>Tanggal</th><th>Matkul</th><th>Status</th><th>Alasan</th><th></th></tr></thead>
+                            <tbody id="kpAbsenTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PANE: TUGAS ===== -->
+            <div class="kp-pane" id="kpPane-tugas" style="display:none;">
+                <div class="card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                        <h3 class="font-bold" style="margin:0;">📝 Tugas Kuliah</h3>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="KuliahPro.openTaskModal()">+ Tugas</button>
+                    </div>
+                    <div id="kpTaskList"></div>
+                </div>
             </div>
         </main>
+
+        <!-- Modal: Tambah/Ubah Matkul -->
+        <div id="kpCourseModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('kpCourseModal')">
+            <div class="modal-content" style="max-width:460px;">
+                <div class="modal-header">
+                    <h2 id="kpCourseModalTitle">Tambah Matkul</h2>
+                    <button class="modal-close" onclick="App.UI.closeModal('kpCourseModal')">&times;</button>
+                </div>
+                <form onsubmit="KuliahPro.saveCourse(event)">
+                    <input type="hidden" id="kpCourseId">
+                    <input type="hidden" id="kpCourseEditDate">
+                    <div class="form-group">
+                        <label>Nama Mata Kuliah</label>
+                        <input type="text" id="kpCourseNama" placeholder="cth. Algoritma & Struktur Data" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hari</label>
+                        <select id="kpCourseHari" required>
+                            <option value="0">Senin</option>
+                            <option value="1">Selasa</option>
+                            <option value="2">Rabu</option>
+                            <option value="3">Kamis</option>
+                            <option value="4">Jum'at</option>
+                            <option value="5">Sabtu</option>
+                            <option value="6">Minggu</option>
+                        </select>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Jam Mulai</label>
+                            <input type="time" id="kpCourseJamMulai" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jam Selesai</label>
+                            <input type="time" id="kpCourseJamSelesai" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>SKS</label>
+                            <input type="number" id="kpCourseSks" min="1" max="6" value="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mode</label>
+                            <select id="kpCourseMode">
+                                <option value="offline">🏫 Offline</option>
+                                <option value="online">💻 Online</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lokasi / Link</label>
+                        <input type="text" id="kpCourseLokasi" placeholder="cth. Ruang 301 / Link Zoom">
+                    </div>
+                    <div class="form-group" id="kpCourseScopeWrap" style="display:none;">
+                        <label>Berlaku Untuk</label>
+                        <div class="kp-scope-choice">
+                            <div class="kp-scope-opt active" data-scope="week" onclick="KuliahPro.setScope('week', this)">Minggu ini saja</div>
+                            <div class="kp-scope-opt" data-scope="forever" onclick="KuliahPro.setScope('forever', this)">Seterusnya</div>
+                        </div>
+                        <input type="hidden" id="kpCourseScope" value="week">
+                    </div>
+                    <div style="display:flex; gap:0.6rem; margin-top:0.5rem;">
+                        <button type="button" class="btn btn-danger" id="kpCourseDeleteBtn" style="display:none;" onclick="KuliahPro.deleteCourse()">🗑️</button>
+                        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="App.UI.closeModal('kpCourseModal')">Batal</button>
+                        <button type="submit" class="btn btn-primary" style="flex:1;">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Tandai Tidak Hadir -->
+        <div id="kpAttendanceModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('kpAttendanceModal')">
+            <div class="modal-content" style="max-width:420px;">
+                <div class="modal-header">
+                    <h2>Tidak Hadir</h2>
+                    <button class="modal-close" onclick="App.UI.closeModal('kpAttendanceModal')">&times;</button>
+                </div>
+                <form onsubmit="KuliahPro.saveAttendanceReason(event)">
+                    <input type="hidden" id="kpAttendKey">
+                    <p class="text-sm text-muted" id="kpAttendCourseLabel" style="margin-bottom:1rem;"></p>
+                    <div class="form-group">
+                        <label>Alasan</label>
+                        <select id="kpAttendReason" required>
+                            <option value="sakit">🤒 Sakit</option>
+                            <option value="izin">✉️ Izin</option>
+                            <option value="alpa">🚫 Tanpa Keterangan (Alpa)</option>
+                            <option value="libur">🏖️ Libur / Kelas Diliburkan</option>
+                            <option value="lainnya">📝 Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan (opsional)</label>
+                        <textarea id="kpAttendNote" rows="2" placeholder="cth. Surat dokter, keperluan keluarga, dll."></textarea>
+                    </div>
+                    <div style="display:flex; gap:0.6rem;">
+                        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="App.UI.closeModal('kpAttendanceModal')">Batal</button>
+                        <button type="submit" class="btn btn-primary" style="flex:1;">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Tambah/Ubah Tugas -->
+        <div id="kpTaskModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('kpTaskModal')">
+            <div class="modal-content" style="max-width:460px;">
+                <div class="modal-header">
+                    <h2 id="kpTaskModalTitle">Tambah Tugas</h2>
+                    <button class="modal-close" onclick="App.UI.closeModal('kpTaskModal')">&times;</button>
+                </div>
+                <form onsubmit="KuliahPro.saveTask(event)">
+                    <input type="hidden" id="kpTaskId">
+                    <div class="form-group">
+                        <label>Judul Tugas</label>
+                        <input type="text" id="kpTaskJudul" placeholder="cth. Laporan Praktikum Bab 3" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mata Kuliah</label>
+                        <select id="kpTaskCourse"><option value="">Umum / Tidak terkait</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="datetime-local" id="kpTaskDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Keterangan</label>
+                        <textarea id="kpTaskKeterangan" rows="3" placeholder="Detail tugas..."></textarea>
+                    </div>
+                    <div style="display:flex; gap:0.6rem;">
+                        <button type="button" class="btn btn-danger" id="kpTaskDeleteBtn" style="display:none;" onclick="KuliahPro.deleteTask()">🗑️</button>
+                        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="App.UI.closeModal('kpTaskModal')">Batal</button>
+                        <button type="submit" class="btn btn-primary" style="flex:1;">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Sidebar navigasi kanan -->
         <nav class="side-nav">
             <button class="nav-item active" id="navGroupKeuangan" onclick="App.UI.switchMainGroup('keuangan')"><div class="nav-icon">💰</div><span class="nav-label">Keuangan</span></button>
             <button class="nav-item" id="navGroupTugas" onclick="App.UI.switchMainGroup('tugas')"><div class="nav-icon nav-icon-wrap">✅<span class="tp-nav-badge" id="todoNavBadge"></span></div><span class="nav-label">Task</span></button>
-            <button class="nav-item" id="navGroupKuliah" onclick="App.UI.switchMainGroup('kuliah')"><div class="nav-icon">🎓</div><span class="nav-label">Kuliah</span></button>
+            <button class="nav-item" id="navGroupKuliah" onclick="App.UI.switchMainGroup('kuliah')"><div class="nav-icon nav-icon-wrap">🎓<span class="tp-nav-badge" id="kpNavBadge"></span></div><span class="nav-label">Kuliah</span></button>
             <button class="nav-item" id="navGroupLaporan" onclick="App.UI.switchMainGroup('laporan')"><div class="nav-icon">📄</div><span class="nav-label">Laporan</span></button>
             <button class="nav-item" id="navGroupSettings" onclick="App.UI.switchMainGroup('settings')"><div class="nav-icon">⚙️</div><span class="nav-label">Setting</span></button>
             <button class="nav-item" id="navAdminTab" style="display: none;" onclick="App.UI.switchTab('admin', this)"><div class="nav-icon">🛡️</div><span class="nav-label">Admin</span></button>
@@ -5710,6 +5984,600 @@
         } else {
             initReminder();
         }
+    })();
+    </script>
+
+    <!-- ============ TAB KULIAH: jadwal, absensi, tugas ============ -->
+    <script>
+    (function(){
+        "use strict";
+        const KP_LS = 'kuliahPro.v1';
+        const DAY_NAMES = ['Senin','Selasa','Rabu','Kamis',"Jum'at",'Sabtu','Minggu'];
+        const DAY_SHORT = ['SEN','SEL','RAB','KAM','JUM','SAB','MIN'];
+        const MONTH_NAMES = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+        const uid = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+        // ---- date utils ----
+        function pad2(n){ return String(n).padStart(2,'0'); }
+        function isoDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+        function parseISODate(s){ if(!s) return null; const parts = s.split('-').map(Number); const dt = new Date(parts[0], parts[1]-1, parts[2]); dt.setHours(0,0,0,0); return dt; }
+        function addDays(d, n){ const dt = new Date(d); dt.setDate(dt.getDate()+n); return dt; }
+        function jsIdxToKpIdx(jsDay){ return (jsDay + 6) % 7; } // Senin=0 ... Minggu=6
+        function mondayOf(d){ const dt = new Date(d); dt.setHours(0,0,0,0); const idx = jsIdxToKpIdx(dt.getDay()); return addDays(dt, -idx); }
+        function fmtDateLabel(d){ if(!d) return '-'; return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`; }
+        function fmtDeadline(iso){
+            if(!iso) return '-';
+            const d = new Date(iso);
+            if(isNaN(d.getTime())) return '-';
+            return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}, ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+        }
+        function escapeHtml(s){
+            return String(s==null?'':s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        // ---- storage ----
+        function emptyState(){ return { courses:[], overrides:{}, attendance:{}, tasks:[] }; }
+        function loadState(){
+            try{
+                const raw = localStorage.getItem(KP_LS);
+                if(!raw) return emptyState();
+                const s = JSON.parse(raw);
+                return {
+                    courses: Array.isArray(s.courses) ? s.courses : [],
+                    overrides: (s.overrides && typeof s.overrides === 'object') ? s.overrides : {},
+                    attendance: (s.attendance && typeof s.attendance === 'object') ? s.attendance : {},
+                    tasks: Array.isArray(s.tasks) ? s.tasks : []
+                };
+            }catch(e){ return emptyState(); }
+        }
+        function saveState(){
+            try{ localStorage.setItem(KP_LS, JSON.stringify(state)); }catch(e){}
+            updateNavBadge();
+        }
+
+        let state = loadState();
+        let currentWeekStart = mondayOf(new Date());
+        let selectedDayIdx = jsIdxToKpIdx(new Date().getDay());
+        let scopeChoice = 'week';
+
+        // ---- occurrence helpers (gabungan jadwal dasar + override per-minggu) ----
+        function overrideKey(courseId, dateISO){ return courseId + '_' + dateISO; }
+        function courseById(id){ return state.courses.find(c => c.id === id); }
+
+        function getOccurrencesForDate(date){
+            const dISO = isoDate(date);
+            const kpIdx = jsIdxToKpIdx(date.getDay());
+            return state.courses
+                .filter(c => c.hari === kpIdx)
+                .map(c => {
+                    const ov = state.overrides[overrideKey(c.id, dISO)];
+                    const merged = Object.assign({}, c, ov || {});
+                    return {
+                        courseId: c.id,
+                        dateISO: dISO,
+                        nama: merged.nama,
+                        jamMulai: merged.jamMulai,
+                        jamSelesai: merged.jamSelesai,
+                        sks: merged.sks,
+                        lokasi: merged.lokasi,
+                        mode: merged.mode,
+                        isLibur: !!(ov && ov.libur),
+                        isOverridden: !!ov
+                    };
+                })
+                .sort((a,b) => (a.jamMulai||'').localeCompare(b.jamMulai||''));
+        }
+
+        // ---- render: header total sks ----
+        function updateTotalSks(){
+            const el = document.getElementById('kpTotalSks');
+            if(!el) return;
+            const total = state.courses.reduce((sum,c) => sum + (Number(c.sks)||0), 0);
+            el.textContent = `${total} SKS / minggu`;
+        }
+
+        // ---- render: week & day strip ----
+        function renderWeekStrip(){
+            const label = document.getElementById('kpWeekLabel');
+            const monday = currentWeekStart;
+            const sunday = addDays(monday, 6);
+            if(label) label.textContent = `${monday.getDate()} ${MONTH_NAMES[monday.getMonth()]} — ${sunday.getDate()} ${MONTH_NAMES[sunday.getMonth()]} ${sunday.getFullYear()}`;
+
+            const strip = document.getElementById('kpDayStrip');
+            if(!strip) return;
+            const todayISOStr = isoDate(new Date());
+            strip.innerHTML = '';
+            for(let i=0;i<7;i++){
+                const d = addDays(monday, i);
+                const dISO = isoDate(d);
+                const occ = getOccurrencesForDate(d).filter(o => !o.isLibur);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'kp-day-btn' + (i===selectedDayIdx ? ' active' : '') + (dISO===todayISOStr ? ' is-today' : '') + (occ.length ? ' has-class' : '');
+                btn.innerHTML = `<span class="kp-day-name">${DAY_SHORT[i]}</span><span class="kp-day-num">${d.getDate()}</span><span class="kp-day-dot"></span>`;
+                btn.addEventListener('click', () => { selectedDayIdx = i; renderWeekStrip(); renderScheduleList(); });
+                strip.appendChild(btn);
+            }
+        }
+
+        function shiftWeek(n){
+            currentWeekStart = addDays(currentWeekStart, n*7);
+            renderWeekStrip(); renderScheduleList();
+        }
+
+        function renderScheduleList(){
+            const listEl = document.getElementById('kpScheduleList');
+            const labelEl = document.getElementById('kpSelectedDayLabel');
+            if(!listEl) return;
+            const date = addDays(currentWeekStart, selectedDayIdx);
+            if(labelEl) labelEl.textContent = `${DAY_NAMES[selectedDayIdx]}, ${fmtDateLabel(date)}`;
+
+            const occ = getOccurrencesForDate(date);
+            if(!occ.length){
+                listEl.innerHTML = `<div class="kp-empty">Belum ada matkul di hari ini. Yuk tambahkan 👆</div>`;
+                updateTotalSks();
+                return;
+            }
+            listEl.innerHTML = occ.map(o => {
+                const modeBadge = o.isLibur ? `<span class="kp-tag kp-tag-muted">🏖️ Libur</span>`
+                    : (o.mode === 'online' ? `<span class="kp-tag" style="background:var(--success-light);color:var(--success-dark);">💻 Online</span>` : `<span class="kp-tag" style="background:var(--primary-light);color:var(--primary-dark);">🏫 Offline</span>`);
+                const overrideBadge = (o.isOverridden && !o.isLibur) ? `<span class="kp-tag kp-tag-warning">Diubah minggu ini</span>` : '';
+                return `<div class="kp-class-card ${o.isLibur?'is-libur':''} ${o.isOverridden && !o.isLibur ? 'is-override':''}">
+                    <div class="kp-class-main">
+                        <div class="kp-class-title">${escapeHtml(o.nama)} ${modeBadge} ${overrideBadge}</div>
+                        <div class="kp-class-meta">
+                            <span>⏰ ${o.jamMulai||'-'} - ${o.jamSelesai||'-'}</span>
+                            <span>📚 ${o.sks||0} SKS</span>
+                            <span>📍 ${escapeHtml(o.lokasi||'-')}</span>
+                        </div>
+                    </div>
+                    <div class="kp-class-actions">
+                        <button type="button" class="kp-icon-btn" title="Ubah" onclick="KuliahPro.openCourseModal('${o.courseId}','${o.dateISO}')">✏️</button>
+                        <button type="button" class="kp-icon-btn" title="${o.isLibur?'Batalkan libur':'Liburkan minggu ini'}" onclick="KuliahPro.toggleLiburWeek('${o.courseId}','${o.dateISO}')">${o.isLibur?'↩️':'🏖️'}</button>
+                    </div>
+                </div>`;
+            }).join('');
+            updateTotalSks();
+        }
+
+        // ---- Tabs ----
+        function switchTab(tab, btn){
+            document.querySelectorAll('.kp-itab').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            const panes = { jadwal:'kpPane-jadwal', absensi:'kpPane-absensi', tugas:'kpPane-tugas' };
+            Object.keys(panes).forEach(k => {
+                const el = document.getElementById(panes[k]);
+                if(el) el.style.display = (k===tab) ? 'block' : 'none';
+            });
+            if(tab === 'absensi') renderAbsensi();
+            if(tab === 'tugas') renderTasks();
+        }
+
+        // ---- Course CRUD ----
+        function setScope(scope, el){
+            scopeChoice = scope;
+            document.querySelectorAll('#kpCourseScopeWrap .kp-scope-opt').forEach(o => o.classList.remove('active'));
+            if(el) el.classList.add('active');
+            document.getElementById('kpCourseScope').value = scope;
+        }
+
+        function openCourseModal(courseId, dateISO){
+            document.getElementById('kpCourseId').value = courseId || '';
+            document.getElementById('kpCourseEditDate').value = dateISO || '';
+            const scopeWrap = document.getElementById('kpCourseScopeWrap');
+            const deleteBtn = document.getElementById('kpCourseDeleteBtn');
+            const hariSelect = document.getElementById('kpCourseHari');
+
+            if(courseId){
+                const c = courseById(courseId);
+                if(!c) return;
+                document.getElementById('kpCourseModalTitle').textContent = 'Ubah Matkul';
+                document.getElementById('kpCourseNama').value = c.nama;
+                hariSelect.value = c.hari;
+                hariSelect.disabled = true;
+
+                let jamMulai = c.jamMulai, jamSelesai = c.jamSelesai, sks = c.sks, mode = c.mode, lokasi = c.lokasi;
+                if(dateISO){
+                    const ov = state.overrides[overrideKey(courseId, dateISO)];
+                    if(ov){
+                        jamMulai = ov.jamMulai ?? jamMulai;
+                        jamSelesai = ov.jamSelesai ?? jamSelesai;
+                        sks = ov.sks ?? sks;
+                        mode = ov.mode ?? mode;
+                        lokasi = ov.lokasi ?? lokasi;
+                    }
+                }
+                document.getElementById('kpCourseJamMulai').value = jamMulai || '';
+                document.getElementById('kpCourseJamSelesai').value = jamSelesai || '';
+                document.getElementById('kpCourseSks').value = sks || 2;
+                document.getElementById('kpCourseMode').value = mode || 'offline';
+                document.getElementById('kpCourseLokasi').value = lokasi || '';
+
+                scopeWrap.style.display = dateISO ? 'block' : 'none';
+                if(dateISO) setScope('week', scopeWrap.querySelector('.kp-scope-opt[data-scope="week"]'));
+                deleteBtn.style.display = 'inline-flex';
+            } else {
+                document.getElementById('kpCourseModalTitle').textContent = 'Tambah Matkul';
+                document.getElementById('kpCourseNama').value = '';
+                hariSelect.value = selectedDayIdx;
+                hariSelect.disabled = false;
+                document.getElementById('kpCourseJamMulai').value = '';
+                document.getElementById('kpCourseJamSelesai').value = '';
+                document.getElementById('kpCourseSks').value = 2;
+                document.getElementById('kpCourseMode').value = 'offline';
+                document.getElementById('kpCourseLokasi').value = '';
+                scopeWrap.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            }
+            App.UI.showModal('kpCourseModal');
+        }
+
+        function saveCourse(e){
+            e.preventDefault();
+            const id = document.getElementById('kpCourseId').value;
+            const editDate = document.getElementById('kpCourseEditDate').value;
+            const nama = document.getElementById('kpCourseNama').value.trim();
+            const hari = parseInt(document.getElementById('kpCourseHari').value, 10);
+            const jamMulai = document.getElementById('kpCourseJamMulai').value;
+            const jamSelesai = document.getElementById('kpCourseJamSelesai').value;
+            const sks = parseInt(document.getElementById('kpCourseSks').value, 10) || 0;
+            const mode = document.getElementById('kpCourseMode').value;
+            const lokasi = document.getElementById('kpCourseLokasi').value.trim();
+
+            if(!nama){ App.UI.showToast('Nama matkul wajib diisi', 'error'); return; }
+            if(jamMulai && jamSelesai && jamSelesai <= jamMulai){ App.UI.showToast('Jam selesai harus setelah jam mulai', 'error'); return; }
+
+            if(!id){
+                state.courses.push({ id: uid(), nama, hari, jamMulai, jamSelesai, sks, mode, lokasi });
+                saveState();
+                App.UI.showToast('Matkul ditambahkan!', 'success');
+            } else if(editDate && scopeChoice === 'week'){
+                state.overrides[overrideKey(id, editDate)] = Object.assign({}, state.overrides[overrideKey(id, editDate)], { jamMulai, jamSelesai, sks, mode, lokasi, libur:false });
+                saveState();
+                App.UI.showToast('Perubahan disimpan untuk minggu ini saja.', 'success');
+            } else {
+                const c = courseById(id);
+                if(c){ c.nama = nama; c.jamMulai = jamMulai; c.jamSelesai = jamSelesai; c.sks = sks; c.mode = mode; c.lokasi = lokasi; }
+                if(editDate) delete state.overrides[overrideKey(id, editDate)];
+                saveState();
+                App.UI.showToast('Perubahan disimpan untuk seterusnya.', 'success');
+            }
+            App.UI.closeModal('kpCourseModal');
+            renderWeekStrip(); renderScheduleList();
+        }
+
+        async function deleteCourse(){
+            const id = document.getElementById('kpCourseId').value;
+            if(!id) return;
+            const yes = await App.UI.confirm('Hapus matkul ini beserta seluruh jadwalnya? Riwayat absensi & tugas terkait tidak akan terhapus.');
+            if(!yes) return;
+            state.courses = state.courses.filter(c => c.id !== id);
+            Object.keys(state.overrides).forEach(k => { if(k.indexOf(id+'_')===0) delete state.overrides[k]; });
+            saveState();
+            App.UI.closeModal('kpCourseModal');
+            renderWeekStrip(); renderScheduleList();
+            App.UI.showToast('Matkul dihapus', 'success');
+        }
+
+        function toggleLiburWeek(courseId, dateISO){
+            const key = overrideKey(courseId, dateISO);
+            const ov = state.overrides[key];
+            if(ov && ov.libur){
+                delete ov.libur;
+                if(Object.keys(ov).length===0) delete state.overrides[key];
+            } else {
+                state.overrides[key] = Object.assign({}, ov, { libur:true });
+            }
+            saveState();
+            renderWeekStrip(); renderScheduleList();
+        }
+
+        // ---- Attendance ----
+        function attendKey(courseId, dateISO){ return courseId + '_' + dateISO; }
+        function reasonLabel(r){
+            return { sakit:'Sakit', izin:'Izin', alpa:'Alpa', libur:'Libur', lainnya:'Lainnya' }[r] || '-';
+        }
+
+        function renderAbsensi(){
+            const dateInput = document.getElementById('kpAbsenDate');
+            if(!dateInput.value) dateInput.value = isoDate(new Date());
+            dateInput.onchange = renderAbsenToday;
+            renderAbsenToday();
+            renderAbsenFilter();
+            renderAbsenTable();
+        }
+
+        function renderAbsenToday(){
+            const dateInput = document.getElementById('kpAbsenDate');
+            const dISO = dateInput.value || isoDate(new Date());
+            const d = parseISODate(dISO);
+            const occ = getOccurrencesForDate(d);
+            const wrap = document.getElementById('kpAbsenToday');
+            if(!occ.length){
+                wrap.innerHTML = `<div class="kp-empty">Tidak ada matkul terjadwal di tanggal ini.</div>`;
+                return;
+            }
+            wrap.innerHTML = occ.map(o => {
+                const rec = state.attendance[attendKey(o.courseId, o.dateISO)];
+                let statusHtml = '';
+                if(rec){
+                    const cls = rec.status === 'hadir' ? 'kp-status-hadir' : (rec.reason==='libur' ? 'kp-status-libur' : 'kp-status-tidak');
+                    const txt = rec.status === 'hadir' ? '✅ Hadir' : ('❌ ' + reasonLabel(rec.reason));
+                    statusHtml = `<span class="kp-attend-status ${cls}">${txt}</span>`;
+                }
+                return `<div class="kp-attend-row">
+                    <div class="kp-attend-info">
+                        <div style="font-weight:700;font-size:0.9rem;">${escapeHtml(o.nama)}</div>
+                        <div class="text-xs text-muted">⏰ ${o.jamMulai||'-'}-${o.jamSelesai||'-'} · ${o.mode==='online'?'💻 Online':'🏫 Offline'}</div>
+                    </div>
+                    <div class="kp-attend-actions">
+                        ${statusHtml}
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="KuliahPro.markHadir('${o.courseId}','${o.dateISO}')">✅ Hadir</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="KuliahPro.openAttendanceModal('${o.courseId}','${o.dateISO}')">❌ Tidak Hadir</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function markHadir(courseId, dateISO){
+            state.attendance[attendKey(courseId, dateISO)] = { status:'hadir' };
+            saveState();
+            renderAbsenToday(); renderAbsenTable();
+            App.UI.showToast('Ditandai hadir ✅', 'success');
+        }
+
+        function openAttendanceModal(courseId, dateISO){
+            const c = courseById(courseId);
+            const occ = getOccurrencesForDate(parseISODate(dateISO)).find(o => o.courseId === courseId);
+            document.getElementById('kpAttendKey').value = attendKey(courseId, dateISO);
+            document.getElementById('kpAttendCourseLabel').textContent = `${c ? c.nama : 'Matkul'} — ${fmtDateLabel(parseISODate(dateISO))}`;
+            document.getElementById('kpAttendReason').value = (occ && occ.isLibur) ? 'libur' : 'sakit';
+            document.getElementById('kpAttendNote').value = '';
+            App.UI.showModal('kpAttendanceModal');
+        }
+
+        function saveAttendanceReason(e){
+            e.preventDefault();
+            const key = document.getElementById('kpAttendKey').value;
+            const reason = document.getElementById('kpAttendReason').value;
+            const note = document.getElementById('kpAttendNote').value.trim();
+            state.attendance[key] = { status:'tidak_hadir', reason, note };
+            saveState();
+            App.UI.closeModal('kpAttendanceModal');
+            renderAbsenToday(); renderAbsenTable();
+            App.UI.showToast('Kehadiran dicatat', 'success');
+        }
+
+        function renderAbsenFilter(){
+            const sel = document.getElementById('kpAbsenFilter');
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">Semua Matkul</option>' + state.courses.map(c => `<option value="${c.id}">${escapeHtml(c.nama)}</option>`).join('');
+            sel.value = cur || '';
+            sel.onchange = renderAbsenTable;
+        }
+
+        function allAttendanceRecords(){
+            return Object.keys(state.attendance).map(k => {
+                const idx = k.lastIndexOf('_');
+                const courseId = k.slice(0, idx);
+                const dateISO = k.slice(idx+1);
+                return Object.assign({ key:k, courseId, dateISO }, state.attendance[k]);
+            }).sort((a,b) => b.dateISO.localeCompare(a.dateISO));
+        }
+
+        function renderAbsenTable(){
+            const filter = document.getElementById('kpAbsenFilter').value;
+            let recs = allAttendanceRecords();
+            if(filter) recs = recs.filter(r => r.courseId === filter);
+            const tbody = document.getElementById('kpAbsenTableBody');
+            if(!recs.length){
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-sm text-muted" style="padding:1.5rem;">Belum ada catatan kehadiran.</td></tr>`;
+                renderAbsenSummary(recs);
+                return;
+            }
+            tbody.innerHTML = recs.map(r => {
+                const c = courseById(r.courseId);
+                const statusTag = r.status==='hadir' ? '<span class="kp-tag" style="background:var(--success-light);color:var(--success-dark);">Hadir</span>' : '<span class="kp-tag kp-tag-danger">Tidak Hadir</span>';
+                const alasan = r.status==='hadir' ? '-' : (reasonLabel(r.reason) + (r.note ? ' — ' + r.note : ''));
+                return `<tr>
+                    <td>${fmtDateLabel(parseISODate(r.dateISO))}</td>
+                    <td>${escapeHtml(c ? c.nama : '(dihapus)')}</td>
+                    <td>${statusTag}</td>
+                    <td>${escapeHtml(alasan)}</td>
+                    <td><button type="button" class="kp-icon-btn" title="Hapus" onclick="KuliahPro.deleteAttendance('${r.key}')">🗑️</button></td>
+                </tr>`;
+            }).join('');
+            renderAbsenSummary(recs);
+        }
+
+        function renderAbsenSummary(recs){
+            if(!recs){
+                const filter = document.getElementById('kpAbsenFilter').value;
+                recs = allAttendanceRecords();
+                if(filter) recs = recs.filter(r => r.courseId === filter);
+            }
+            const relevant = recs.filter(r => r.reason !== 'libur');
+            const hadir = relevant.filter(r => r.status==='hadir').length;
+            const tidak = relevant.filter(r => r.status!=='hadir').length;
+            const total = hadir + tidak;
+            const pct = total ? Math.round((hadir/total)*100) : 0;
+            const wrap = document.getElementById('kpAbsenSummary');
+            if(!wrap) return;
+            wrap.innerHTML = `
+                <div class="kp-summary-box"><div class="kp-summary-num" style="color:var(--success-dark);">${hadir}</div><div class="kp-summary-lbl">Hadir</div></div>
+                <div class="kp-summary-box"><div class="kp-summary-num" style="color:var(--danger-dark);">${tidak}</div><div class="kp-summary-lbl">Tidak Hadir</div></div>
+                <div class="kp-summary-box"><div class="kp-summary-num">${pct}%</div><div class="kp-summary-lbl">Persentase</div></div>`;
+        }
+
+        async function deleteAttendance(key){
+            const yes = await App.UI.confirm('Hapus catatan kehadiran ini?');
+            if(!yes) return;
+            delete state.attendance[key];
+            saveState();
+            renderAbsenToday(); renderAbsenTable();
+        }
+
+        // ---- Tasks ----
+        function fillCourseSelect(selectEl, selectedId){
+            selectEl.innerHTML = '<option value="">Umum / Tidak terkait</option>' + state.courses
+                .slice().sort((a,b)=> a.hari - b.hari || (a.jamMulai||'').localeCompare(b.jamMulai||''))
+                .map(c => `<option value="${c.id}" ${c.id===selectedId?'selected':''}>${escapeHtml(c.nama)} (${DAY_SHORT[c.hari]})</option>`).join('');
+        }
+
+        function openTaskModal(taskId){
+            const t = taskId ? state.tasks.find(x => x.id === taskId) : null;
+            fillCourseSelect(document.getElementById('kpTaskCourse'), t ? t.courseId : '');
+            document.getElementById('kpTaskId').value = taskId || '';
+            const deleteBtn = document.getElementById('kpTaskDeleteBtn');
+            if(t){
+                document.getElementById('kpTaskModalTitle').textContent = 'Ubah Tugas';
+                document.getElementById('kpTaskJudul').value = t.judul;
+                document.getElementById('kpTaskDeadline').value = t.deadline ? t.deadline.slice(0,16) : '';
+                document.getElementById('kpTaskKeterangan').value = t.keterangan || '';
+                deleteBtn.style.display = 'inline-flex';
+            } else {
+                document.getElementById('kpTaskModalTitle').textContent = 'Tambah Tugas';
+                document.getElementById('kpTaskJudul').value = '';
+                document.getElementById('kpTaskDeadline').value = '';
+                document.getElementById('kpTaskKeterangan').value = '';
+                deleteBtn.style.display = 'none';
+            }
+            App.UI.showModal('kpTaskModal');
+        }
+
+        function saveTask(e){
+            e.preventDefault();
+            const id = document.getElementById('kpTaskId').value;
+            const judul = document.getElementById('kpTaskJudul').value.trim();
+            const courseId = document.getElementById('kpTaskCourse').value;
+            const deadline = document.getElementById('kpTaskDeadline').value;
+            const keterangan = document.getElementById('kpTaskKeterangan').value.trim();
+            if(!judul){ App.UI.showToast('Judul tugas wajib diisi', 'error'); return; }
+            if(!deadline){ App.UI.showToast('Deadline wajib diisi', 'error'); return; }
+
+            if(id){
+                const t = state.tasks.find(x => x.id === id);
+                if(t){ t.judul=judul; t.courseId=courseId; t.deadline=deadline; t.keterangan=keterangan; t.notifiedH2=false; }
+            } else {
+                state.tasks.push({ id: uid(), judul, courseId, deadline, keterangan, done:false, notifiedH2:false });
+            }
+            saveState();
+            App.UI.closeModal('kpTaskModal');
+            renderTasks();
+            App.UI.showToast('Tugas tersimpan!', 'success');
+        }
+
+        async function deleteTask(){
+            const id = document.getElementById('kpTaskId').value;
+            if(!id) return;
+            const yes = await App.UI.confirm('Hapus tugas ini?');
+            if(!yes) return;
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            saveState();
+            App.UI.closeModal('kpTaskModal');
+            renderTasks();
+            App.UI.showToast('Tugas dihapus', 'success');
+        }
+
+        function toggleTaskDone(id){
+            const t = state.tasks.find(t => t.id === id);
+            if(!t) return;
+            t.done = !t.done;
+            saveState();
+            renderTasks();
+        }
+
+        function taskStatusInfo(t){
+            if(t.done) return { tag:'<span class="kp-tag" style="background:var(--success-light);color:var(--success-dark);">Selesai</span>', urgent:false };
+            const now = new Date();
+            const dl = new Date(t.deadline);
+            const diffMs = dl - now;
+            const diffDays = diffMs / 86400000;
+            if(diffMs < 0) return { tag:'<span class="kp-tag kp-tag-danger">Terlambat</span>', urgent:true };
+            if(diffDays <= 2) return { tag:'<span class="kp-tag kp-tag-warning">H-2</span>', urgent:true };
+            return { tag:'<span class="kp-tag kp-tag-muted">Aktif</span>', urgent:false };
+        }
+
+        function renderTasks(){
+            const list = document.getElementById('kpTaskList');
+            if(!list) return;
+            const tasks = state.tasks.slice().sort((a,b) => {
+                if(a.done !== b.done) return a.done ? 1 : -1;
+                return new Date(a.deadline) - new Date(b.deadline);
+            });
+            if(!tasks.length){
+                list.innerHTML = `<div class="kp-empty">Belum ada tugas. Tambahkan biar gak lupa deadline 📚</div>`;
+                updateTaskBadge();
+                return;
+            }
+            list.innerHTML = tasks.map(t => {
+                const c = t.courseId ? courseById(t.courseId) : null;
+                const info = taskStatusInfo(t);
+                return `<div class="kp-task-item ${t.done ? 'is-done':''}">
+                    <div class="kp-task-check ${t.done?'checked':''}" onclick="KuliahPro.toggleTaskDone('${t.id}')">${t.done?'✓':''}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="kp-task-title">${escapeHtml(t.judul)}</div>
+                        <div class="kp-task-meta">${info.tag} <span>⏰ ${fmtDeadline(t.deadline)}</span> ${c ? `<span>📖 ${escapeHtml(c.nama)}</span>`:''}</div>
+                        ${t.keterangan ? `<div class="kp-task-note">${escapeHtml(t.keterangan)}</div>` : ''}
+                    </div>
+                    <div class="kp-task-actions">
+                        <button type="button" class="kp-icon-btn" title="Ubah" onclick="KuliahPro.openTaskModal('${t.id}')">✏️</button>
+                    </div>
+                </div>`;
+            }).join('');
+            updateTaskBadge();
+        }
+
+        function urgentTaskCount(){
+            return state.tasks.filter(t => !t.done && taskStatusInfo(t).urgent).length;
+        }
+
+        function updateTaskBadge(){
+            const badge = document.getElementById('kpTaskTabBadge');
+            if(!badge) return;
+            const count = urgentTaskCount();
+            if(count>0){ badge.textContent = count>9?'9+':count; badge.style.display='inline-flex'; } else badge.style.display='none';
+        }
+
+        function updateNavBadge(){
+            const badge = document.getElementById('kpNavBadge');
+            if(!badge) return;
+            const count = urgentTaskCount();
+            if(count>0){ badge.textContent = count>9?'9+':count; badge.classList.add('show'); } else badge.classList.remove('show');
+            updateTaskBadge();
+        }
+
+        // ---- Notifikasi deadline H-2 (sekali per hari) ----
+        function checkDeadlineNotif(){
+            const key = 'kuliahPro.notifDate';
+            const today = isoDate(new Date());
+            if(localStorage.getItem(key) === today){ updateNavBadge(); return; }
+            const urgent = state.tasks.filter(t => !t.done && taskStatusInfo(t).urgent);
+            if(urgent.length && window.App && App.UI && App.UI.showToast){
+                const names = urgent.slice(0,3).map(t=>t.judul).join(', ');
+                App.UI.showToast(`📚 ${urgent.length} tugas kuliah mendekati/lewat deadline: ${names}${urgent.length>3?', ...':''}`, 'error');
+            }
+            localStorage.setItem(key, today);
+            updateNavBadge();
+        }
+
+        // ---- init ----
+        function init(){
+            renderWeekStrip();
+            renderScheduleList();
+            updateNavBadge();
+            setTimeout(checkDeadlineNotif, 1200);
+        }
+
+        if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+
+        window.KuliahPro = {
+            switchTab, shiftWeek, openCourseModal, saveCourse, deleteCourse, setScope, toggleLiburWeek,
+            markHadir, openAttendanceModal, saveAttendanceReason, deleteAttendance,
+            openTaskModal, saveTask, deleteTask, toggleTaskDone
+        };
     })();
     </script>
 
