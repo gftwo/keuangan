@@ -289,9 +289,9 @@
             z-index: -1; pointer-events: none; transition: background 0.5s ease;
         }
 
-        .app-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 7rem 1.5rem; display: none; }
+        .app-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 84px 2.5rem 1.5rem; display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 640px) { .app-container { padding: 1rem 1rem 6.5rem 1rem; } .grid-2 { grid-template-columns: 1fr; gap: 0.75rem; } }
+        @media (max-width: 640px) { .app-container { padding: 1rem 76px 2rem 1rem; } .grid-2 { grid-template-columns: 1fr; gap: 0.75rem; } }
 
         h1, h2, h3, h4 { font-weight: 700; color: var(--text-main); letter-spacing: -0.02em; margin-bottom: 0.5rem; }
         p { color: var(--text-muted); }
@@ -522,20 +522,31 @@
         .admin-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.875rem; }
         .admin-detail-row:last-child { border-bottom: none; }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-glass); backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 20px rgba(0,0,0,0.05); }
-        .nav-container { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; padding: 0.5rem 1rem; overflow-x: auto; scrollbar-width: none; }
-        .nav-container::-webkit-scrollbar { display: none; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.45rem 0.3rem; border: none; background: none; cursor: pointer; color: var(--text-muted); border-radius: var(--radius-md); flex: 1; min-width: 44px; transition: var(--transition-fast); }
+        /* Sidebar navigasi kanan (ganti bottom-nav lama) */
+        .side-nav {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 68px; z-index: 100;
+            background: var(--bg-glass); backdrop-filter: blur(20px); border-left: 1px solid var(--border-light);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem;
+            padding: 1rem 0.4rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.55rem 0.2rem; border: none; background: none; cursor: pointer; color: var(--text-muted); border-radius: var(--radius-md); width: 100%; transition: var(--transition-fast); }
         @media (max-width: 430px) {
-            .nav-item { padding: 0.4rem 0.15rem; min-width: 40px; }
+            .nav-item { padding: 0.45rem 0.15rem; }
             .nav-icon { font-size: 1.05rem; }
-            .nav-label { font-size: 0.55rem; }
+            .nav-label { font-size: 0.52rem; }
         }
         .nav-item:hover { color: var(--primary); background: var(--bg-surface-hover); }
-        .nav-item.active { color: var(--primary); }
+        .nav-item.active { color: var(--primary); background: var(--primary-light); }
         .nav-icon { font-size: 1.25rem; transition: transform var(--transition-bounce); filter: grayscale(1) opacity(0.7); }
-        .nav-item.active .nav-icon { filter: grayscale(0) opacity(1); transform: translateY(-2px) scale(1.1); }
-        .nav-label { font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
+        .nav-item.active .nav-icon { filter: grayscale(0) opacity(1); transform: translateY(-1px) scale(1.1); }
+        .nav-label { font-size: 0.6rem; font-weight: 700; white-space: nowrap; }
+
+        /* Sub-tab strip (muncul kalau grup punya lebih dari 1 sub-halaman) */
+        .sub-tab-strip { display: flex; gap: 0.5rem; overflow-x: auto; scrollbar-width: none; margin-bottom: 1.25rem; padding-bottom: 0.2rem; }
+        .sub-tab-strip::-webkit-scrollbar { display: none; }
+        .sub-tab-pill { flex-shrink: 0; display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: 99px; border: 1px solid var(--border-light); background: var(--bg-surface); font-size: 0.82rem; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: all var(--transition-fast); white-space: nowrap; }
+        .sub-tab-pill.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: var(--shadow-sm); }
 
         .app-section { display: none; animation: slideUp 0.3s ease; }
         .app-section.active { display: block; }
@@ -1378,6 +1389,9 @@
             </div>
         </header>
 
+        <!-- Sub-tab strip (muncul kalau grup nav aktif punya beberapa sub-halaman) -->
+        <div class="sub-tab-strip" id="subTabStrip" style="display:none;"></div>
+
         <!-- 0. TAB ADMIN PANEL -->
         <main class="app-section" id="view-admin">
             <div class="card" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; margin-bottom: 1rem;">
@@ -2097,18 +2111,23 @@
 </div>
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-container">
-                <button class="nav-item active" onclick="App.UI.switchTab('input', this)"><div class="nav-icon">✍️</div><span class="nav-label">Input</span></button>
-                <button class="nav-item" onclick="App.UI.switchTab('history', this)"><div class="nav-icon">🕰️</div><span class="nav-label">Riwayat</span></button>
-                <button class="nav-item" onclick="App.UI.switchTab('laporan', this)"><div class="nav-icon">📄</div><span class="nav-label">Laporan</span></button>
-                <button class="nav-item" onclick="App.UI.switchTab('planning', this)"><div class="nav-icon">🗂️</div><span class="nav-label">Kelola</span></button>
-                <button class="nav-item" onclick="App.UI.switchTab('alokasi', this)"><div class="nav-icon">🎯</div><span class="nav-label">Alokasi</span></button>
-                <button class="nav-item" id="navTodoTab" onclick="App.UI.switchTab('todo', this)"><div class="nav-icon nav-icon-wrap">✅<span class="tp-nav-badge" id="todoNavBadge"></span></div><span class="nav-label">Tugas</span></button>
-                <button class="nav-item" id="navSettingsTab" onclick="App.UI.switchTab('settings', this)"><div class="nav-icon">⚙️</div><span class="nav-label">Setelan</span></button>
-                <button class="nav-item" id="navAdminTab" style="display: none;" onclick="App.UI.switchTab('admin', this)"><div class="nav-icon">🛡️</div><span class="nav-label">Admin</span></button>
+        <!-- 6. TAB KULIAH (placeholder — dilengkapi di tahap berikutnya) -->
+        <main class="app-section" id="view-kuliah">
+            <div class="card text-center" style="padding: 3rem 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎓</div>
+                <h2 class="font-bold" style="margin-bottom: 0.5rem;">Tab Kuliah</h2>
+                <p class="text-sm text-muted">Sedang disiapkan: jadwal matkul, absensi, dan tugas kuliah.</p>
             </div>
+        </main>
+
+        <!-- Sidebar navigasi kanan -->
+        <nav class="side-nav">
+            <button class="nav-item active" id="navGroupKeuangan" onclick="App.UI.switchMainGroup('keuangan')"><div class="nav-icon">💰</div><span class="nav-label">Keuangan</span></button>
+            <button class="nav-item" id="navGroupTugas" onclick="App.UI.switchMainGroup('tugas')"><div class="nav-icon nav-icon-wrap">✅<span class="tp-nav-badge" id="todoNavBadge"></span></div><span class="nav-label">Task</span></button>
+            <button class="nav-item" id="navGroupKuliah" onclick="App.UI.switchMainGroup('kuliah')"><div class="nav-icon">🎓</div><span class="nav-label">Kuliah</span></button>
+            <button class="nav-item" id="navGroupLaporan" onclick="App.UI.switchMainGroup('laporan')"><div class="nav-icon">📄</div><span class="nav-label">Laporan</span></button>
+            <button class="nav-item" id="navGroupSettings" onclick="App.UI.switchMainGroup('settings')"><div class="nav-icon">⚙️</div><span class="nav-label">Setting</span></button>
+            <button class="nav-item" id="navAdminTab" style="display: none;" onclick="App.UI.switchTab('admin', this)"><div class="nav-icon">🛡️</div><span class="nav-label">Admin</span></button>
         </nav>
     </div> <!-- End App Container -->
 
@@ -2956,7 +2975,7 @@
                             if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
                             if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
                         } else { this.save(); }
-                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
+                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.switchMainGroup('keuangan'); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
                         return;
                     }
 
@@ -2972,7 +2991,7 @@
                             if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
                             if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
                         } else { this.save(); }
-                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
+                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.switchMainGroup('keuangan'); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
                     }, (error) => { console.error("Firebase DB Error:", error); App.UI.updateSyncStatus('error'); });
                 },
                 save() {
@@ -3837,12 +3856,50 @@
                 },
                 switchTab(id, btn) {
                     document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-                    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-                    document.getElementById('view-'+id).classList.add('active'); btn.classList.add('active');
+                    document.getElementById('view-'+id).classList.add('active');
+                    if (btn) {
+                        const container = btn.closest('.side-nav') || btn.closest('.sub-tab-strip');
+                        if (container) container.querySelectorAll('.active').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    }
+                    for (const [g, cfg] of Object.entries(this.NavGroups)) { if (cfg.subs.some(s => s.id === id)) { this._lastSubTab[g] = id; break; } }
                     if(id === 'laporan') setTimeout(() => { this.renderAnalytics(); this.renderReport(); }, 100);
                     if(id === 'alokasi') setTimeout(() => this.renderAllocation(), 100);
                     const fab = document.getElementById('adjustmentFAB'); if (fab) fab.style.display = (id === 'history') ? 'flex' : 'none';
                     if(id === 'admin' && App.State.isAdmin) App.Admin.loadData();
+                },
+                NavGroups: {
+                    keuangan: { subs: [
+                        { id: 'input', icon: '✍️', label: 'Input' },
+                        { id: 'history', icon: '🕰️', label: 'Riwayat' },
+                        { id: 'planning', icon: '🗂️', label: 'Kelola' },
+                        { id: 'alokasi', icon: '🎯', label: 'Alokasi' }
+                    ]},
+                    tugas: { subs: [{ id: 'todo', icon: '✅', label: 'Tugas' }] },
+                    kuliah: { subs: [{ id: 'kuliah', icon: '🎓', label: 'Kuliah' }] },
+                    laporan: { subs: [{ id: 'laporan', icon: '📄', label: 'Laporan' }] },
+                    settings: { subs: [{ id: 'settings', icon: '⚙️', label: 'Setelan' }] }
+                },
+                _activeGroup: 'keuangan',
+                _lastSubTab: {},
+                switchMainGroup(group) {
+                    this._activeGroup = group;
+                    const groupId = 'navGroup' + group.charAt(0).toUpperCase() + group.slice(1);
+                    document.querySelectorAll('.side-nav .nav-item').forEach(b => b.classList.remove('active'));
+                    const groupBtn = document.getElementById(groupId); if (groupBtn) groupBtn.classList.add('active');
+
+                    const cfg = this.NavGroups[group];
+                    const strip = document.getElementById('subTabStrip');
+                    if (cfg.subs.length > 1) {
+                        strip.style.display = 'flex';
+                        strip.innerHTML = cfg.subs.map(s => `<button type="button" class="sub-tab-pill" id="subtab-${s.id}" onclick="App.UI.switchTab('${s.id}', this)">${s.icon} ${s.label}</button>`).join('');
+                    } else {
+                        strip.style.display = 'none'; strip.innerHTML = '';
+                    }
+                    const targetSub = this._lastSubTab[group] || cfg.subs[0].id;
+                    this._lastSubTab[group] = targetSub;
+                    const subBtn = document.getElementById('subtab-' + targetSub) || groupBtn;
+                    this.switchTab(targetSub, subBtn);
                 },
                 showModal(id) { document.getElementById(id).classList.add('show'); },
                 openChangelog() {
@@ -5605,8 +5662,7 @@
         }
 
         function openTodoTab(){
-            const btn = document.getElementById('navTodoTab');
-            if(btn && window.App && App.UI && App.UI.switchTab) App.UI.switchTab('todo', btn);
+            if(window.App && App.UI && App.UI.switchMainGroup) App.UI.switchMainGroup('tugas');
         }
 
         function closePopup(){
