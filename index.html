@@ -42,7 +42,7 @@
                 <input type="checkbox" id="trpDontShowToday">
                 <span>Jangan tampilkan lagi hari ini</span>
             </label>
-            <button class="btn btn-primary" style="width:100%;padding:0.85rem;font-size:0.9rem;" id="trpOpenTodo">✅ Buka Tugas Pro</button>
+            <button class="btn btn-primary" style="width:100%;padding:0.85rem;font-size:0.9rem;" id="trpOpenTodo">✅ Buka Tugas</button>
         </div>
     </div>
 
@@ -289,9 +289,9 @@
             z-index: -1; pointer-events: none; transition: background 0.5s ease;
         }
 
-        .app-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 84px 2.5rem 1.5rem; display: none; }
+        .app-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 2.5rem 84px; display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 640px) { .app-container { padding: 1rem 76px 2rem 1rem; } .grid-2 { grid-template-columns: 1fr; gap: 0.75rem; } }
+        @media (max-width: 640px) { .app-container { padding: 1rem 1rem 2rem 76px; } .grid-2 { grid-template-columns: 1fr; gap: 0.75rem; } }
 
         h1, h2, h3, h4 { font-weight: 700; color: var(--text-main); letter-spacing: -0.02em; margin-bottom: 0.5rem; }
         p { color: var(--text-muted); }
@@ -522,25 +522,77 @@
         .admin-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.875rem; }
         .admin-detail-row:last-child { border-bottom: none; }
 
-        /* Sidebar navigasi kanan (ganti bottom-nav lama) */
+        /* Sidebar navigasi kiri: rail ikon statis + panel label overlay (toggle) */
         .side-nav {
-            position: fixed; top: 0; right: 0; bottom: 0; width: 68px; z-index: 100;
-            background: var(--bg-glass); backdrop-filter: blur(20px); border-left: 1px solid var(--border-light);
-            box-shadow: -4px 0 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem;
-            padding: 1rem 0.4rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+            position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+            display: flex; flex-direction: row; align-items: stretch; pointer-events: none;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.55rem 0.2rem; border: none; background: none; cursor: pointer; color: var(--text-muted); border-radius: var(--radius-md); width: 100%; transition: var(--transition-fast); }
-        @media (max-width: 430px) {
-            .nav-item { padding: 0.45rem 0.15rem; }
-            .nav-icon { font-size: 1.05rem; }
-            .nav-label { font-size: 0.52rem; }
+        .side-nav > * { pointer-events: auto; }
+        .sn-rail {
+            width: 68px; flex-shrink: 0;
+            background: linear-gradient(180deg, hsl(var(--hue-primary), 45%, 15%), hsl(var(--hue-primary), 45%, 9%));
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            padding: 1.1rem 0.45rem; padding-bottom: calc(1.1rem + env(safe-area-inset-bottom));
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15); position: relative; z-index: 2;
         }
-        .nav-item:hover { color: var(--primary); background: var(--bg-surface-hover); }
-        .nav-item.active { color: var(--primary); background: var(--primary-light); }
-        .nav-icon { font-size: 1.25rem; transition: transform var(--transition-bounce); filter: grayscale(1) opacity(0.7); }
-        .nav-item.active .nav-icon { filter: grayscale(0) opacity(1); transform: translateY(-1px) scale(1.1); }
-        .nav-label { font-size: 0.6rem; font-weight: 700; white-space: nowrap; }
+        .sn-logo-btn {
+            width: 42px; height: 42px; border: none; border-radius: var(--radius-md);
+            background: var(--primary-gradient); color: #fff; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition-fast);
+            box-shadow: 0 6px 14px hsla(var(--hue-primary), var(--sat-primary), 55%, 0.4); flex-shrink: 0;
+        }
+        .sn-logo-btn:hover { transform: scale(1.06); }
+        .sn-logo-btn.is-open { background: rgba(255,255,255,0.15); box-shadow: none; }
+        .sn-rail-divider { width: 28px; height: 1px; background: rgba(255,255,255,0.12); margin: 0.15rem 0 0.3rem; flex-shrink: 0; }
+        .sn-rail-btn {
+            width: 42px; height: 42px; border: none; border-radius: var(--radius-md); background: transparent;
+            color: rgba(255,255,255,0.5); font-size: 1.15rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition-fast);
+            filter: grayscale(1) opacity(0.75);
+        }
+        .sn-rail-btn:hover { background: rgba(255,255,255,0.08); filter: grayscale(0.4) opacity(0.9); }
+        .sn-rail-btn.active { background: var(--primary-gradient); filter: grayscale(0) opacity(1); box-shadow: 0 6px 14px hsla(var(--hue-primary), var(--sat-primary), 55%, 0.4); }
+        .sn-rail-spacer { flex: 1; }
+        .sn-rail-avatar {
+            width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.12);
+            color: #fff; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: var(--transition-fast);
+        }
+        .sn-rail-avatar:hover { background: rgba(255,255,255,0.2); }
+
+        .sn-scrim {
+            position: fixed; inset: 0; left: 68px; background: rgba(15, 23, 42, 0.4); z-index: 99;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+        }
+        .sn-scrim.is-open { opacity: 1; pointer-events: auto; }
+
+        .sn-panel {
+            display: flex; flex-direction: column; width: 232px; flex-shrink: 0;
+            background: hsl(var(--hue-primary), 38%, 17%);
+            padding: 1.5rem 1.15rem; gap: 1.35rem; overflow-y: auto;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+            position: fixed; top: 0; left: 68px; bottom: 0; z-index: 101;
+            transform: translateX(calc(-100% - 68px)); transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .sn-panel.is-open { transform: translateX(0); }
+        .sn-brand { display: flex; align-items: center; gap: 0.65rem; }
+        .sn-brand-icon { width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .sn-brand-text { color: #fff; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.1px; }
+        .sn-close-btn { margin-left: auto; width: 28px; height: 28px; border: none; border-radius: var(--radius-sm); background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sn-close-btn:hover { background: rgba(255,255,255,0.16); color: #fff; }
+        .sn-illustration {
+            background: hsl(var(--hue-primary), 40%, 23%); border-radius: var(--radius-lg);
+            padding: 1.1rem 0.75rem; text-align: center; font-size: 1.7rem; line-height: 1.4;
+            color: rgba(255,255,255,0.92); letter-spacing: 0.2rem;
+        }
+        .sn-menu { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.1rem; }
+
+        .nav-item { display: flex; align-items: center; gap: 0.65rem; width: 100%; padding: 0.68rem 0.8rem; border: none; background: none; cursor: pointer; color: rgba(255,255,255,0.6); border-radius: var(--radius-md); transition: var(--transition-fast); text-align: left; }
+        .nav-item:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .nav-item.active { color: #fff; background: var(--primary-gradient); box-shadow: 0 8px 16px hsla(var(--hue-primary), var(--sat-primary), 55%, 0.35); }
+        .nav-icon { font-size: 1.05rem; width: 20px; text-align: center; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; transition: transform var(--transition-bounce); filter: grayscale(1) opacity(0.75); }
+        .nav-item.active .nav-icon { filter: grayscale(0) opacity(1); }
+        .nav-label { font-size: 0.83rem; font-weight: 700; white-space: nowrap; }
 
         /* Sub-tab strip (muncul kalau grup punya lebih dari 1 sub-halaman) */
         .sub-tab-strip { display: flex; gap: 0.5rem; overflow-x: auto; scrollbar-width: none; margin-bottom: 1.25rem; padding-bottom: 0.2rem; }
@@ -1243,12 +1295,24 @@
         /* Sidebar proyek/filter Tugas Pro dijadikan popup mengambang (bukan kolom kiri-kanan) */
         #tabTodo .app { grid-template-columns: 1fr !important; }
         #tabTodo .side {
-            position: fixed !important; top: 0; left: 0; bottom: 0; width: 280px; max-width: 82vw;
-            z-index: calc(var(--z-drawer) + 1);
-            transform: translateX(-100%); transition: transform .32s var(--ease-out);
-            box-shadow: var(--sh-lg) !important; border-right: 1px solid var(--border-light);
+            position: fixed !important; top: 50%; left: 50%; bottom: auto;
+            width: min(320px, 90vw); max-height: min(600px, 82vh);
+            display: flex; flex-direction: column; overflow-y: auto;
+            border-radius: var(--r-lg, 20px); z-index: 150;
+            transform: translate(-50%, -50%) scale(0.94); opacity: 0; pointer-events: none;
+            transition: transform .22s var(--ease-out), opacity .18s ease;
+            box-shadow: var(--sh-lg) !important; border: 1px solid var(--border-light);
         }
-        #tabTodo .side.open { transform: none; }
+        #tabTodo .side.open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+        #tabTodo .side .brand { position: relative; padding-right: 2.2rem; }
+        #tabTodo .side-close-btn {
+            position: absolute; top: var(--sp-3, 12px); right: var(--sp-3, 12px);
+            width: 28px; height: 28px; border-radius: 50%; border: none;
+            background: var(--surface-2); color: var(--muted); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all .15s var(--ease-out);
+        }
+        #tabTodo .side-close-btn:hover { background: var(--p-high-tint); color: var(--p-high); }
+        #tabTodo .scrim { z-index: 149; }
         #tabTodo .menu-btn { display: grid !important; }
         #tabTodo .app {
             height: min(680px, 72vh);
@@ -1961,7 +2025,7 @@
                 
                 <div style="text-align: center; margin-top: 2rem;">
                     <button type="button" class="text-xs font-bold" style="background:none; border:none; color:var(--primary); cursor:pointer; padding:0.5rem;" onclick="App.UI.openChangelog()">📜 Lihat Riwayat Update</button>
-                    <p class="text-xs font-bold" id="appVersionFooter" style="opacity:0.5; margin-top:0.35rem;">Keuangan Pro v8.6</p>
+                    <p class="text-xs font-bold" id="appVersionFooter" style="opacity:0.5; margin-top:0.35rem;">Keuangan Pro v8.8</p>
                 </div>
             </div>
         </main>
@@ -1978,6 +2042,7 @@
         <div class="brand-name">Tugas Pro</div>
         <div class="brand-sub">To-do harian</div>
       </div>
+      <button class="side-close-btn" type="button" title="Tutup" onclick="document.getElementById('side').classList.remove('open');document.getElementById('scrim').classList.remove('on');"><i data-lucide="x" style="width:15px;height:15px"></i></button>
     </div>
 
     <button class="side-add" id="sideAddBtn" type="button"><i data-lucide="plus" style="width:17px;height:17px"></i>Tambah Tugas</button>
@@ -2396,13 +2461,77 @@
 
         <!-- Sidebar navigasi kanan -->
         <nav class="side-nav">
-            <button class="nav-item active" id="navGroupKeuangan" onclick="App.UI.switchMainGroup('keuangan')"><div class="nav-icon">💰</div><span class="nav-label">Keuangan</span></button>
-            <button class="nav-item" id="navGroupTugas" onclick="App.UI.switchMainGroup('tugas')"><div class="nav-icon nav-icon-wrap">✅<span class="tp-nav-badge" id="todoNavBadge"></span></div><span class="nav-label">Task</span></button>
-            <button class="nav-item" id="navGroupKuliah" onclick="App.UI.switchMainGroup('kuliah')"><div class="nav-icon nav-icon-wrap">🎓<span class="tp-nav-badge" id="kpNavBadge"></span></div><span class="nav-label">Kuliah</span></button>
-            <button class="nav-item" id="navGroupLaporan" onclick="App.UI.switchMainGroup('laporan')"><div class="nav-icon">📄</div><span class="nav-label">Laporan</span></button>
-            <button class="nav-item" id="navGroupSettings" onclick="App.UI.switchMainGroup('settings')"><div class="nav-icon">⚙️</div><span class="nav-label">Setting</span></button>
-            <button class="nav-item" id="navAdminTab" style="display: none;" onclick="App.UI.switchTab('admin', this)"><div class="nav-icon">🛡️</div><span class="nav-label">Admin</span></button>
+            <div class="sn-rail">
+                <button type="button" class="sn-logo-btn" id="snLogoBtn" title="Tampilkan/sembunyikan menu" onclick="SNav.toggle()">💰</button>
+                <div class="sn-rail-divider"></div>
+                <button type="button" class="sn-rail-btn active" data-group="keuangan" title="Keuangan" onclick="App.UI.switchMainGroup('keuangan')">💰</button>
+                <button type="button" class="sn-rail-btn" data-group="tugas" title="Task" onclick="App.UI.switchMainGroup('tugas')">✅</button>
+                <button type="button" class="sn-rail-btn" data-group="kuliah" title="Kuliah" onclick="App.UI.switchMainGroup('kuliah')">🎓</button>
+                <button type="button" class="sn-rail-btn" data-group="laporan" title="Laporan" onclick="App.UI.switchMainGroup('laporan')">📄</button>
+                <button type="button" class="sn-rail-btn" data-group="settings" title="Setting" onclick="App.UI.switchMainGroup('settings')">⚙️</button>
+                <button type="button" class="sn-rail-btn" id="railAdminBtn" data-group="admin" title="Admin" style="display:none;" onclick="App.UI.switchTab('admin', document.getElementById('navAdminTab'))">🛡️</button>
+                <div class="sn-rail-spacer"></div>
+                <button type="button" class="sn-rail-avatar" title="Akun & Setelan" onclick="App.UI.switchMainGroup('settings')">👤</button>
+            </div>
+            <div class="sn-scrim" id="snScrim" onclick="SNav.close()"></div>
+            <div class="sn-panel" id="snPanel">
+                <div class="sn-brand">
+                    <span class="sn-brand-icon">💰</span>
+                    <span class="sn-brand-text">Keuangan Pro</span>
+                    <button type="button" class="sn-close-btn" title="Tutup menu" onclick="SNav.close()">✕</button>
+                </div>
+                <div class="sn-illustration">💰📊🎓</div>
+                <div class="sn-menu">
+                    <button class="nav-item active" id="navGroupKeuangan" onclick="App.UI.switchMainGroup('keuangan')"><span class="nav-icon">💰</span><span class="nav-label">Keuangan</span></button>
+                    <button class="nav-item" id="navGroupTugas" onclick="App.UI.switchMainGroup('tugas')"><span class="nav-icon nav-icon-wrap">✅<span class="tp-nav-badge" id="todoNavBadge"></span></span><span class="nav-label">Task</span></button>
+                    <button class="nav-item" id="navGroupKuliah" onclick="App.UI.switchMainGroup('kuliah')"><span class="nav-icon nav-icon-wrap">🎓<span class="tp-nav-badge" id="kpNavBadge"></span></span><span class="nav-label">Kuliah</span></button>
+                    <button class="nav-item" id="navGroupLaporan" onclick="App.UI.switchMainGroup('laporan')"><span class="nav-icon">📄</span><span class="nav-label">Laporan</span></button>
+                    <button class="nav-item" id="navGroupSettings" onclick="App.UI.switchMainGroup('settings')"><span class="nav-icon">⚙️</span><span class="nav-label">Setting</span></button>
+                    <button class="nav-item" id="navAdminTab" style="display: none;" onclick="App.UI.switchTab('admin', this)"><span class="nav-icon">🛡️</span><span class="nav-label">Admin</span></button>
+                </div>
+            </div>
         </nav>
+
+        <script>
+        (function(){
+            function syncRail(group){
+                document.querySelectorAll('.sn-rail-btn[data-group]').forEach(function(b){
+                    b.classList.toggle('active', b.getAttribute('data-group') === group);
+                });
+            }
+            function openPanel(){
+                document.getElementById('snPanel').classList.add('is-open');
+                document.getElementById('snScrim').classList.add('is-open');
+                document.getElementById('snLogoBtn').classList.add('is-open');
+            }
+            function closePanel(){
+                document.getElementById('snPanel').classList.remove('is-open');
+                document.getElementById('snScrim').classList.remove('is-open');
+                document.getElementById('snLogoBtn').classList.remove('is-open');
+            }
+            function togglePanel(){
+                const isOpen = document.getElementById('snPanel').classList.contains('is-open');
+                if(isOpen) closePanel(); else openPanel();
+            }
+            window.SNav = { open: openPanel, close: closePanel, toggle: togglePanel };
+
+            function patch(){
+                if(!window.App || !App.UI || !App.UI.switchMainGroup){ setTimeout(patch, 50); return; }
+                if(App.UI._railPatched) return;
+                const orig = App.UI.switchMainGroup.bind(App.UI);
+                App.UI.switchMainGroup = function(group){
+                    orig(group); syncRail(group); closePanel();
+                    // Render ulang saat tab baru kelihatan, biar animasi kartu tugas & data terbaru
+                    // gak "nyangkut" gara-gara sempat dirender waktu tab masih disembunyikan (display:none).
+                    if(group==='tugas' && window.TugasProBridge && window.TugasProBridge.refresh) window.TugasProBridge.refresh();
+                    if(group==='kuliah' && window.KuliahProBridge && window.KuliahProBridge.refresh) window.KuliahProBridge.refresh();
+                };
+                App.UI._railPatched = true;
+                syncRail(App.UI._activeGroup || 'keuangan');
+            }
+            patch();
+        })();
+        </script>
     </div> <!-- End App Container -->
 
     <!-- =======================================================================
@@ -2819,6 +2948,19 @@
                 ],
                 AccountIcons: { cash: '💵', saldo: '🪪' },
                 Changelog: [
+                    { version: 'v8.8', date: 'September 2026', items: [
+                        'Perbaikan bug besar: nambah/ubah data di tab Kuliah (absen, tugas, dll) sebelumnya selalu "nyeret" balik ke tab Keuangan — sekarang gak lagi',
+                        'Tab Task: tugas yang diselesaikan hari ini sekarang tetap muncul di grup "Selesai" pada tampilan Hari Ini, gak ngilang gitu aja',
+                        'Tab Task: benerin render pas pertama buka tab (dulu kadang harus pencet filter dulu biar tugas kelihatan)',
+                        '"Kecualikan dari Budget" dihapus dari form Tambah Transaksi — cukup diatur & ditandai di Riwayat/Edit transaksi'
+                    ]},
+                    { version: 'v8.7', date: 'September 2026', items: [
+                        'Tab Kuliah (jadwal, absensi/kehadiran, tugas kuliah) sekarang ikut sinkron ke akun — sebelumnya cuma tersimpan di HP masing-masing',
+                        'Backup Manual (.json) sekarang lengkap: transfer, utang/piutang, template cepat, dan data Kuliah ikut ke-backup & ke-restore',
+                        'Perbaikan bug Tugas Pro: tugas berulang yang ditandai selesai lewat halaman edit sekarang ikut maju ke jadwal berikutnya, sama seperti lewat checklist',
+                        'Tugas (Pro & Kuliah) yang sudah selesai sekarang nampilin kapan tepatnya diselesaikan',
+                        'Popup "Jadwal Kamu Hari Ini" sekarang gabungin tugas Tugas Pro & deadline tugas Kuliah dalam satu tampilan'
+                    ]},
                     { version: 'v8.6', date: 'September 2026', items: [
                         'Filter Riwayat sekarang bisa per sub-dompet spesifik (SeaBank, KromBank, GoPay, DANA, ShopeePay) atau semua Saldo',
                         '2 tema baru: Biru Abu (slate) & Kuning Abu (stone/amber)',
@@ -2924,24 +3066,26 @@
                         }
 
                         if(App.State.isAdmin) {
-                            const navItems = document.querySelectorAll('.nav-item');
+                            const navItems = document.querySelectorAll('.nav-item, .sn-rail-btn');
                             // Sembunyikan semua tab kecuali admin
                             navItems.forEach(el => {
-                                if(el.id === 'navAdminTab') el.style.display = 'flex';
+                                if(el.id === 'navAdminTab' || el.id === 'railAdminBtn') el.style.display = 'flex';
                                 else el.style.display = 'none';
                             });
+                            const railAvatar = document.querySelector('.sn-rail-avatar'); if(railAvatar) railAvatar.style.display = 'none';
                             // Pindah ke tab admin
                             setTimeout(() => { App.UI.switchTab('admin', document.getElementById('navAdminTab')); }, 50);
                             // Tombol profile dropdown tidak punya akses ke settings
                             document.getElementById('btnPdSettings').style.display = 'none';
                             App.Admin.init();
                         } else {
-                            const navItems = document.querySelectorAll('.nav-item');
+                            const navItems = document.querySelectorAll('.nav-item, .sn-rail-btn');
                             // Tampilkan semua tab, sembunyikan admin
                             navItems.forEach(el => {
-                                if(el.id === 'navAdminTab') el.style.display = 'none';
+                                if(el.id === 'navAdminTab' || el.id === 'railAdminBtn') el.style.display = 'none';
                                 else el.style.display = 'flex';
                             });
+                            const railAvatar = document.querySelector('.sn-rail-avatar'); if(railAvatar) railAvatar.style.display = 'flex';
                             document.getElementById('btnPdSettings').style.display = 'flex';
                             setTimeout(() => { 
                                 const inputTab = document.querySelector('.nav-item[onclick*="input"]'); 
@@ -3024,6 +3168,7 @@
                 },
                 handleLogout() {
                     App.UI.closeModal('logoutModal');
+                    App.State._navInitDone = false;
                     if (this.isDummy) {
                         localStorage.removeItem('dummy_user_v8');
                         App.UI.showToast('Berhasil keluar. Sampai jumpa! 👋', 'info');
@@ -3247,9 +3392,12 @@
                             App.State.budgets = data.budgets || []; App.State.paylaters = data.paylaters || [];
                             App.State.transfers = data.transfers || []; App.State.debts = data.debts || []; App.State.quickTemplates = data.quickTemplates || []; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap};
                             if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
+                            if(data.kuliah && window.KuliahProBridge) window.KuliahProBridge.applyExternalData(data.kuliah);
                             if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
                         } else { this.save(); }
-                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.switchMainGroup('keuangan'); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
+                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect();
+                        if(!App.State._navInitDone){ App.State._navInitDone = true; App.UI.switchMainGroup('keuangan'); }
+                        App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
                         return;
                     }
 
@@ -3263,15 +3411,23 @@
                             App.State.budgets = data.budgets || []; App.State.paylaters = data.paylaters || [];
                             App.State.transfers = data.transfers || []; App.State.debts = data.debts || []; App.State.quickTemplates = data.quickTemplates || []; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap};
                             if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
+                            if(data.kuliah && window.KuliahProBridge) window.KuliahProBridge.applyExternalData(data.kuliah);
                             if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
                         } else { this.save(); }
-                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect(); App.UI.switchMainGroup('keuangan'); App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
+                        App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect();
+                        // Cuma pindah ke tab Keuangan sekali di awal (pas baru login/buka app), bukan tiap kali
+                        // ada data baru masuk — sebelumnya ini bikin app "kelempar balik" ke Keuangan tiap kali
+                        // nambah/ubah apa pun di tab Kuliah (absen, tugas, dst) karena tiap App.DB.save() bikin
+                        // listener realtime ini kepanggil lagi.
+                        if(!App.State._navInitDone){ App.State._navInitDone = true; App.UI.switchMainGroup('keuangan'); }
+                        App.UI.renderAll(); setTimeout(() => { if(window.AppNotifyQueue) window.AppNotifyQueue.register('finance-alert', () => App.Handlers.checkStartupAlerts()); else App.Handlers.checkStartupAlerts(); }, 700);
                     }, (error) => { console.error("Firebase DB Error:", error); App.UI.updateSyncStatus('error'); });
                 },
                 save() {
                    if (!App.State.user) return;
                    let todosData = null; try { const raw = localStorage.getItem('tugasPro.v2'); if(raw) todosData = JSON.parse(raw); } catch(e){}
-                   const dataToSave = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, transfers: App.State.transfers, debts: App.State.debts, quickTemplates: App.State.quickTemplates, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, todos: todosData, settings: App.State.settings, updatedAt: new Date().toISOString() };
+                   let kuliahData = null; try { const raw = localStorage.getItem('kuliahPro.v1'); if(raw) kuliahData = JSON.parse(raw); } catch(e){}
+                   const dataToSave = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, transfers: App.State.transfers, debts: App.State.debts, quickTemplates: App.State.quickTemplates, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, todos: todosData, kuliah: kuliahData, settings: App.State.settings, updatedAt: new Date().toISOString() };
     
                  // ✅ Selalu backup settings ke backup_v6 agar persist saat refresh
                    localStorage.setItem('backup_v6', JSON.stringify({ settings: App.State.settings }));
@@ -4961,8 +5117,9 @@
                     if(type === 'json' && !App.State.isPremium) { App.UI.showModal('premiumModal'); return; }
                     let text = '', filename = '';
                     let todosData = null; try { const raw = localStorage.getItem('tugasPro.v2'); if(raw) todosData = JSON.parse(raw); } catch(e){}
+                    let kuliahData = null; try { const raw = localStorage.getItem('kuliahPro.v1'); if(raw) kuliahData = JSON.parse(raw); } catch(e){}
                     if(type === 'json') {
-                        const dataToExport = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, todos: todosData, settings: App.State.settings };
+                        const dataToExport = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, transfers: App.State.transfers, debts: App.State.debts, quickTemplates: App.State.quickTemplates, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, todos: todosData, kuliah: kuliahData, settings: App.State.settings };
                         text = JSON.stringify(dataToExport, null, 2); filename = `Backup_KeuanganPro_${new Date().toISOString().split('T')[0]}.json`;
                     } else {
                         const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
@@ -5010,7 +5167,7 @@
                                 const data = JSON.parse(ev.target.result);
                                 if(data.transactions) {
                                     const yes = await App.UI.confirm('Menimpa data saat ini dengan data Backup?'); if(!yes) return;
-                                    App.State.isPremium = data.isPremium || App.State.isPremium; App.State.transactions = data.transactions; if(data.customCategories) App.State.customCategories = data.customCategories; if(data.budgets) App.State.budgets = data.budgets; if(data.recurring) App.State.recurring = data.recurring; if(data.paylaters) App.State.paylaters = data.paylaters; if(data.transfers) App.State.transfers = data.transfers; if(data.debts) App.State.debts = data.debts; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap}; App.DB.save(); App.UI.renderAll(); App.UI.renderCategoriesSelect(); if(data.todos && window.TugasProBridge && window.TugasProBridge.applyExternalTodos) window.TugasProBridge.applyExternalTodos(data.todos); App.UI.showToast('Backup berhasil dipulihkan!', 'success');
+                                    App.State.isPremium = data.isPremium || App.State.isPremium; App.State.transactions = data.transactions; if(data.customCategories) App.State.customCategories = data.customCategories; if(data.budgets) App.State.budgets = data.budgets; if(data.recurring) App.State.recurring = data.recurring; if(data.paylaters) App.State.paylaters = data.paylaters; if(data.transfers) App.State.transfers = data.transfers; if(data.debts) App.State.debts = data.debts; if(data.quickTemplates) App.State.quickTemplates = data.quickTemplates; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap}; if(data.settings) App.State.settings = {...App.State.settings, ...data.settings}; App.DB.save(); App.UI.renderAll(); App.UI.renderCategoriesSelect(); if(data.todos && window.TugasProBridge && window.TugasProBridge.applyExternalTodos) window.TugasProBridge.applyExternalTodos(data.todos); if(data.kuliah && window.KuliahProBridge && window.KuliahProBridge.applyExternalData) window.KuliahProBridge.applyExternalData(data.kuliah); App.UI.showToast('Backup berhasil dipulihkan!', 'success');
                                 }
                             } else if (file.name.endsWith('.csv')) {
                                 const content = ev.target.result;
@@ -5285,6 +5442,11 @@
     return d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
   }
   function fmtDateFull(iso){ const d=parseISO(iso); return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'}); }
+  function fmtCompletedAt(ts){
+    if(!ts) return '';
+    const d=new Date(ts);
+    return d.toLocaleDateString('id-ID',{day:'numeric',month:'short'})+', '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  }
   function dueClass(iso, done){
     if(!iso||done) return '';
     const d=parseISO(iso), now=new Date(); now.setHours(0,0,0,0);
@@ -5383,7 +5545,7 @@
   // ---- SMART LISTS ----
   const startOfToday = () => { const d=new Date(); d.setHours(0,0,0,0); return d; };
   const SMART = [
-    { id:'today', name:'Hari Ini', icon:'sun', match:(t)=> (!t.done && t.due && parseISO(t.due) <= startOfToday()) || (t.due===todayISO()) },
+    { id:'today', name:'Hari Ini', icon:'sun', match:(t)=> (!t.done && t.due && parseISO(t.due) <= startOfToday()) || (t.due===todayISO()) || (t.done && t.completedAt && new Date(t.completedAt).setHours(0,0,0,0) === startOfToday().getTime()) },
     { id:'upcoming', name:'Akan Datang', icon:'calendar-clock', match:(t)=> t.due && parseISO(t.due) > startOfToday() },
     { id:'all', name:'Semua Tugas', icon:'inbox', match:()=> true },
     { id:'flagged', name:'Prioritas', icon:'flag', match:(t)=> t.priority==='high' || t.priority==='med' },
@@ -5512,6 +5674,7 @@
     if(proj) meta+=`<span class="badge proj"><span class="proj-dot" style="background:${proj.color}"></span>${esc(proj.name)}</span>`;
     if((t.subtasks||[]).length) meta+=`<span class="badge sub"><i data-lucide="list-checks" class="ico"></i>${subDone}/${t.subtasks.length}</span>`;
     if(t.notes) meta+=`<span class="badge"><i data-lucide="align-left" class="ico"></i></span>`;
+    if(t.done && t.completedAt) meta+=`<span class="badge" style="opacity:.85"><i data-lucide="check-circle-2" class="ico"></i>Selesai ${fmtCompletedAt(t.completedAt)}</span>`;
     (t.tags||[]).forEach(tg=> meta+=`<span class="badge tag">#${esc(tg)}</span>`);
     el.innerHTML=`
       <span class="drag-h" title="Geser untuk urutkan"><i data-lucide="grip-vertical" style="width:16px;height:16px"></i></span>
@@ -5554,14 +5717,15 @@
   function toggleDone(id,el){
     const t=state.tasks.find(x=>x.id===id); if(!t) return;
     if(t.repeat && !t.done){
-      const prevDue=t.due, prevSubs=(t.subtasks||[]).map(s=>s.done);
+      const prevDue=t.due, prevSubs=(t.subtasks||[]).map(s=>s.done), prevCompletedAt=t.completedAt;
       advanceRepeat(t); save(); renderSide();
       if(el) el.classList.add('looping');
       setTimeout(render,220);
-      toast(`Diulang. Berikutnya: ${fmtDate(t.due)}`,'Urungkan',()=>{ t.due=prevDue; (t.subtasks||[]).forEach((s,i)=>s.done=prevSubs[i]); t.done=false; save(); render(); });
+      toast(`Diulang. Berikutnya: ${fmtDate(t.due)}`,'Urungkan',()=>{ t.due=prevDue; (t.subtasks||[]).forEach((s,i)=>s.done=prevSubs[i]); t.done=false; t.completedAt=prevCompletedAt; save(); render(); });
       return;
     }
-    t.done=!t.done; save(); setTimeout(render, t.done?180:0); renderSide();
+    t.done=!t.done; t.completedAt = t.done ? Date.now() : null;
+    save(); setTimeout(render, t.done?180:0); renderSide();
     if(el) el.classList.toggle('done',t.done);
   }
   function deleteTask(id){
@@ -5660,10 +5824,19 @@
 
     if(editingId){
       const t=state.tasks.find(x=>x.id===editingId);
-      Object.assign(t,{ title, priority:pri, due, project:proj, tags, notes, repeat, subtasks:draftSubs });
-      t.done=$('#tCheck').classList.contains('done');
+      const wantDone=$('#tCheck').classList.contains('done');
+      Object.assign(t,{ title, priority:pri, due, project:proj, tags, notes, subtasks:draftSubs, repeat });
+      let msg='Perubahan disimpan';
+      // Disamakan dengan perilaku toggleDone() di list: tugas berulang tetap maju ke jadwal
+      // berikutnya walau ditandai selesai lewat modal edit, bukan cuma lewat checklist.
+      if(wantDone && !t.done){
+        if(t.repeat){ advanceRepeat(t); msg=`Perubahan disimpan. Diulang, berikutnya: ${fmtDate(t.due)}`; }
+        else { t.done=true; t.completedAt=Date.now(); msg='Perubahan disimpan. Tugas selesai! 🎉'; }
+      } else if(!wantDone && t.done){
+        t.done=false; t.completedAt=null;
+      }
       save(); $('#taskModal').close(); render();
-      toast('Perubahan disimpan','',null);
+      toast(msg,'',null);
     } else {
       const nt={ id:uid(), title, done:false, priority:pri, due, project:proj, tags, subtasks:draftSubs, notes, repeat, created:Date.now(), order:-1 };
       state.tasks.unshift(nt); state.tasks.forEach((t,i)=>t.order=i);
@@ -5860,6 +6033,29 @@
             return p==='high' ? '#ef4444' : p==='med' ? '#f59e0b' : p==='low' ? '#3b82f6' : '#94a3b8';
         }
 
+        // ── Tugas Kuliah (deadline) ikut ditampilkan di popup harian, biar satu tempat aja ──
+        function loadKuliahTasks(){
+            try {
+                const raw = localStorage.getItem('kuliahPro.v1');
+                if(!raw) return [];
+                const s = JSON.parse(raw);
+                return (s && Array.isArray(s.tasks)) ? s.tasks : [];
+            } catch(e){ return []; }
+        }
+        function getKuliahAgenda(){
+            const now = new Date();
+            const startToday = new Date(); startToday.setHours(0,0,0,0);
+            const overdue = [], today = [];
+            loadKuliahTasks().filter(t => !t.done && t.deadline).forEach(t => {
+                const dl = new Date(t.deadline);
+                if(isNaN(dl.getTime())) return;
+                const item = { title: t.judul, priority: dl < now ? 'high' : 'med', source: 'kuliah' };
+                if(dl < now) overdue.push(item);
+                else { const dlDay = new Date(dl); dlDay.setHours(0,0,0,0); if(dlDay.getTime() === startToday.getTime()) today.push(item); }
+            });
+            return { overdue, today };
+        }
+
         function updateNavBadge(){
             const badge = document.getElementById('todoNavBadge');
             if(!badge) return;
@@ -5900,13 +6096,23 @@
             } catch(e){}
         };
 
+        let lastHasTugas = false, lastHasKuliah = false;
         function renderPopup(){
-            const { overdue, today } = getAgenda();
+            const agendaTugas = getAgenda();
+            const agendaKuliah = getKuliahAgenda();
+            const overdue = [...agendaTugas.overdue.map(t=>({...t, source:t.source||'tugas'})), ...agendaKuliah.overdue];
+            const today = [...agendaTugas.today.map(t=>({...t, source:t.source||'tugas'})), ...agendaKuliah.today];
+            const rank = { high:0, med:1, low:2, none:3 };
+            const bySort = (a,b) => (rank[a.priority]??3) - (rank[b.priority]??3);
+            overdue.sort(bySort); today.sort(bySort);
+
             const listEl = document.getElementById('trpList');
             const subEl = document.getElementById('trpSubtitle');
             if(!listEl || !subEl) return false;
             listEl.innerHTML = '';
             const total = overdue.length + today.length;
+            lastHasTugas = agendaTugas.overdue.length + agendaTugas.today.length > 0;
+            lastHasKuliah = agendaKuliah.overdue.length + agendaKuliah.today.length > 0;
 
             if(total === 0){
                 subEl.textContent = 'Tidak ada jadwal yang perlu dikejar 🎉';
@@ -5922,10 +6128,11 @@
             const renderItem = (t, tag) => {
                 const row = document.createElement('div');
                 row.className = 'trp-item';
+                const srcIcon = t.source === 'kuliah' ? '🎓 ' : '';
                 row.innerHTML = `<span class="trp-dot" style="background:${priorityColor(t.priority)}"></span>`
                     + `<span class="trp-item-title"></span>`
                     + `<span class="trp-item-tag ${tag==='over'?'over':'today'}">${tag==='over' ? 'Terlewat' : 'Hari ini'}</span>`;
-                row.querySelector('.trp-item-title').textContent = t.title || '(Tanpa judul)';
+                row.querySelector('.trp-item-title').textContent = srcIcon + (t.title || '(Tanpa judul)');
                 return row;
             };
 
@@ -5936,7 +6143,10 @@
         }
 
         function openTodoTab(){
-            if(window.App && App.UI && App.UI.switchMainGroup) App.UI.switchMainGroup('tugas');
+            if(window.App && App.UI && App.UI.switchMainGroup){
+                if(!lastHasTugas && lastHasKuliah) App.UI.switchMainGroup('kuliah');
+                else App.UI.switchMainGroup('tugas');
+            }
         }
 
         function closePopup(){
@@ -6034,7 +6244,40 @@
         function saveState(){
             try{ localStorage.setItem(KP_LS, JSON.stringify(state)); }catch(e){}
             updateNavBadge();
+            try { if(window.KuliahProBridge && window.KuliahProBridge.notifyChange) window.KuliahProBridge.notifyChange(); } catch(e){ console.warn('KuliahProBridge sync gagal (diabaikan):', e); }
         }
+
+        // ── Jembatan ke sistem simpan/sync akun Keuangan Pro ──
+        // (biar jadwal, absensi, dan tugas kuliah ikut sinkron ke akun, bukan cuma tersimpan di HP)
+        window.KuliahProBridge = window.KuliahProBridge || {};
+        window.KuliahProBridge.notifyChange = function(){
+            try { if(window.App && App.DB && typeof App.DB.save === 'function') App.DB.save(); } catch(e){ console.warn('Gagal sync data Kuliah ke akun (diabaikan):', e); }
+        };
+        // Dipanggil saat data kuliah datang dari akun (login / sinkron real-time / restore backup)
+        window.KuliahProBridge.applyExternalData = function(dataObj){
+            if(!dataObj) return;
+            try {
+                // Firebase Realtime Database membuang array/objek kosong saat disimpan — pulihkan
+                // field yang hilang biar render gak crash, sama seperti pola di Tugas Pro.
+                const clean = {
+                    courses: Array.isArray(dataObj.courses) ? dataObj.courses : [],
+                    overrides: (dataObj.overrides && typeof dataObj.overrides === 'object') ? dataObj.overrides : {},
+                    attendance: (dataObj.attendance && typeof dataObj.attendance === 'object') ? dataObj.attendance : {},
+                    tasks: Array.isArray(dataObj.tasks) ? dataObj.tasks : []
+                };
+                localStorage.setItem(KP_LS, JSON.stringify(clean));
+                state = clean;
+                renderWeekStrip(); renderScheduleList(); updateNavBadge();
+                const absensiPane = document.getElementById('kpPane-absensi');
+                if(absensiPane && absensiPane.style.display !== 'none') renderAbsensi();
+                const tugasPane = document.getElementById('kpPane-tugas');
+                if(tugasPane && tugasPane.style.display !== 'none') renderTasks();
+            } catch(e){}
+        };
+        window.KuliahProBridge.refresh = function(){
+            state = loadState();
+            renderWeekStrip(); renderScheduleList(); updateNavBadge();
+        };
 
         let state = loadState();
         let currentWeekStart = mondayOf(new Date());
@@ -6484,6 +6727,7 @@
             const t = state.tasks.find(t => t.id === id);
             if(!t) return;
             t.done = !t.done;
+            t.completedAt = t.done ? Date.now() : null;
             saveState();
             renderTasks();
         }
@@ -6518,7 +6762,7 @@
                     <div class="kp-task-check ${t.done?'checked':''}" onclick="KuliahPro.toggleTaskDone('${t.id}')">${t.done?'✓':''}</div>
                     <div style="flex:1;min-width:0;">
                         <div class="kp-task-title">${escapeHtml(t.judul)}</div>
-                        <div class="kp-task-meta">${info.tag} <span>⏰ ${fmtDeadline(t.deadline)}</span> ${c ? `<span>📖 ${escapeHtml(c.nama)}</span>`:''}</div>
+                        <div class="kp-task-meta">${info.tag} <span>⏰ ${fmtDeadline(t.deadline)}</span> ${c ? `<span>📖 ${escapeHtml(c.nama)}</span>`:''} ${t.done && t.completedAt ? `<span>✅ Selesai ${fmtDeadline(t.completedAt)}</span>` : ''}</div>
                         ${t.keterangan ? `<div class="kp-task-note">${escapeHtml(t.keterangan)}</div>` : ''}
                     </div>
                     <div class="kp-task-actions">
