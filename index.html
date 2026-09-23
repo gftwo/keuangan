@@ -1805,7 +1805,14 @@
             </div>
 
             <div class="card">
-                <h3 class="text-sm font-semibold" style="margin-bottom:1rem;">🗂️ Per Kategori</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h3 class="text-sm font-semibold" style="margin:0;">🗂️ Per Kategori</h3>
+                    <button type="button" id="repCategoryFilterBtn" class="text-xs text-primary font-semibold" style="background:none; border:none; cursor:pointer;" onclick="App.UI.toggleReportCategoryFilter()">⚙️ Filter Kategori</button>
+                </div>
+                <div id="repCategoryFilterPanel" style="display:none; margin-bottom:1rem; padding:0.9rem; background:var(--bg-body); border-radius:var(--radius-md); border:1px solid var(--border-light);">
+                    <p class="text-xs text-muted" style="margin-bottom:0.6rem;">Centang kategori yang mau ditampilkan. Yang tidak dicentang akan disembunyikan dari laporan ini (grafik, total, & PDF).</p>
+                    <div id="repCategoryFilterList" style="display:flex; flex-direction:column; gap:0.6rem;"></div>
+                </div>
                 <div id="repCategoryList"></div>
             </div>
 
@@ -2586,6 +2593,7 @@
             </div>
             <form onsubmit="App.QuickTemplate.submitQuickAdd(event)">
                 <input type="hidden" id="qaTemplateId">
+                <p class="text-xs text-muted" id="qaAccountInfo" style="margin:-0.35rem 0 1rem;"></p>
                 <div class="form-group">
                     <label>Nominal</label>
                     <input type="text" id="qaAmount" inputmode="numeric" placeholder="0" oninput="App.Utils.formatInput(this)" required autofocus>
@@ -2618,8 +2626,18 @@
                         <select id="qtType"><option value="out">Pengeluaran</option><option value="in">Pemasukan</option></select>
                     </div>
                     <div class="form-group"><label>Akun</label>
-                        <select id="qtAccount"><option value="cash">💵 Cash</option><option value="saldo">🪪 Saldo</option></select>
+                        <select id="qtAccount" onchange="document.getElementById('qtSubWalletWrap').style.display = this.value === 'saldo' ? 'block' : 'none';"><option value="cash">💵 Cash</option><option value="saldo">🪪 Saldo</option></select>
                     </div>
+                </div>
+                <div class="form-group" id="qtSubWalletWrap" style="display:none;">
+                    <label>👛 Dompet</label>
+                    <select id="qtSubWallet">
+                        <option value="seabank">🏦 SeaBank</option>
+                        <option value="krombank">🟣 KromBank</option>
+                        <option value="gopay">🟢 GoPay</option>
+                        <option value="dana">🔵 DANA</option>
+                        <option value="shopeepay">👛 ShopeePay</option>
+                    </select>
                 </div>
                 <div class="form-group"><label>Kategori</label><select id="qtCategory"></select></div>
                 <button type="button" class="btn btn-primary" style="width:100%;" onclick="App.QuickTemplate.addTemplate()">+ Simpan Template</button>
@@ -3741,12 +3759,15 @@
                     ).join('');
                     box.innerHTML = chips + `<button type="button" class="qt-chip qt-chip-add" onclick="App.QuickTemplate.openManage()">+ Tambah</button>`;
                 },
+                _subWalletLabels: { seabank: 'SeaBank', krombank: 'KromBank', gopay: 'GoPay', dana: 'DANA', shopeepay: 'ShopeePay' },
                 openQuickAdd(idx) {
                     const t = App.State.quickTemplates[idx]; if (!t) return;
                     document.getElementById('qaTemplateId').value = idx;
                     document.getElementById('qaModalTitle').textContent = `${t.icon || '⚡'} ${t.name}`;
                     document.getElementById('qaAmount').value = '';
                     document.getElementById('qaNote').value = t.name;
+                    const accLabel = t.jenisAkun === 'cash' ? '💵 Cash / Tunai' : `🪪 Saldo${t.subWallet && this._subWalletLabels[t.subWallet] ? ' · ' + this._subWalletLabels[t.subWallet] : ''}`;
+                    const info = document.getElementById('qaAccountInfo'); if (info) info.textContent = `Akun tujuan: ${accLabel}`;
                     App.UI.showModal('quickAddModal');
                     setTimeout(() => document.getElementById('qaAmount').focus(), 150);
                 },
@@ -3757,13 +3778,14 @@
                     const amount = App.Utils.parseCurrency(document.getElementById('qaAmount').value);
                     if (!amount) return App.UI.showToast('Isi nominalnya dulu ya', 'error');
                     const note = document.getElementById('qaNote').value.trim() || t.name;
-                    const tx = { id: Date.now(), tanggal: new Date().toISOString().split('T')[0], jenisAkun: t.jenisAkun, subWallet: null, pemasukan: t.type === 'in' ? amount : 0, pengeluaran: t.type === 'out' ? amount : 0, kategori: t.kategori, keterangan: note, excludeFromBudget: false };
+                    const tx = { id: Date.now(), tanggal: new Date().toISOString().split('T')[0], jenisAkun: t.jenisAkun, subWallet: t.jenisAkun === 'saldo' ? (t.subWallet || null) : null, pemasukan: t.type === 'in' ? amount : 0, pengeluaran: t.type === 'out' ? amount : 0, kategori: t.kategori, keterangan: note, excludeFromBudget: false };
                     App.State.transactions.push(tx);
                     App.DB.save(); App.UI.renderAll(); App.UI.closeModal('quickAddModal');
                     App.UI.showToast(`✅ ${t.name} dicatat!`, 'success');
                 },
                 openManage() {
                     document.getElementById('qtCategory').innerHTML = [...App.Config.DefaultCategories, ...App.State.customCategories].map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+                    document.getElementById('qtSubWalletWrap').style.display = document.getElementById('qtAccount').value === 'saldo' ? 'block' : 'none';
                     this.renderManageList();
                     App.UI.showModal('manageTemplatesModal');
                 },
@@ -3772,11 +3794,12 @@
                     if (!App.State.quickTemplates.length) { list.innerHTML = '<p class="text-xs text-muted">Belum ada template. Tambah di bawah ya.</p>'; return; }
                     list.innerHTML = App.State.quickTemplates.map((t, i) => {
                         const catObj = [...App.Config.DefaultCategories, ...App.State.customCategories].find(c => c.id === t.kategori) || { icon: '📝', name: t.kategori };
+                        const accLabel = t.jenisAkun === 'cash' ? 'Cash' : ('Saldo' + (t.subWallet && this._subWalletLabels[t.subWallet] ? ' · ' + this._subWalletLabels[t.subWallet] : ''));
                         return `<div class="qt-manage-item">
                             <span style="font-size:1.2rem;">${t.icon || '⚡'}</span>
                             <div style="flex:1; min-width:0;">
                                 <div class="font-bold text-sm">${t.name}</div>
-                                <div class="text-xs text-muted">${t.type === 'in' ? 'Pemasukan' : 'Pengeluaran'} • ${t.jenisAkun === 'cash' ? 'Cash' : 'Saldo'} • ${catObj.icon} ${catObj.name}</div>
+                                <div class="text-xs text-muted">${t.type === 'in' ? 'Pemasukan' : 'Pengeluaran'} • ${accLabel} • ${catObj.icon} ${catObj.name}</div>
                             </div>
                             <button type="button" class="btn btn-icon" style="background:var(--danger-light); color:var(--danger-dark); width:30px; height:30px;" onclick="App.QuickTemplate.deleteTemplate(${i})">🗑️</button>
                         </div>`;
@@ -3788,8 +3811,9 @@
                     const icon = document.getElementById('qtIcon').value.trim() || '⚡';
                     const type = document.getElementById('qtType').value;
                     const jenisAkun = document.getElementById('qtAccount').value;
+                    const subWallet = jenisAkun === 'saldo' ? (document.getElementById('qtSubWallet').value || null) : null;
                     const kategori = document.getElementById('qtCategory').value;
-                    App.State.quickTemplates.push({ id: Date.now(), icon, name, type, jenisAkun, kategori });
+                    App.State.quickTemplates.push({ id: Date.now(), icon, name, type, jenisAkun, subWallet, kategori });
                     App.DB.save(); this.render(); this.renderManageList();
                     document.getElementById('qtName').value = ''; document.getElementById('qtIcon').value = '⚡';
                     App.UI.showToast('Template ditambahkan!', 'success');
@@ -4167,6 +4191,39 @@
                 },
                 _reportPeriod: 'month',
                 _reportOffset: 0,
+                _reportExcludedCategories: (() => { try { return JSON.parse(localStorage.getItem('kpReportExcludedCat') || '[]'); } catch(e){ return []; } })(),
+                toggleReportCategoryFilter() {
+                    const panel = document.getElementById('repCategoryFilterPanel');
+                    const show = panel.style.display === 'none';
+                    panel.style.display = show ? 'block' : 'none';
+                    if (show) this.renderReportCategoryFilter();
+                },
+                renderReportCategoryFilter() {
+                    const box = document.getElementById('repCategoryFilterList'); if (!box) return;
+                    const allCats = [...App.Config.DefaultCategories, ...App.State.customCategories];
+                    box.innerHTML = allCats.map(c => {
+                        const excluded = this._reportExcludedCategories.includes(c.id);
+                        return `<label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;">
+                            <input type="checkbox" ${excluded ? '' : 'checked'} onchange="App.UI.toggleReportCategoryExclusion('${c.id}', this.checked)">
+                            <span class="text-sm">${c.icon} ${c.name}</span>
+                        </label>`;
+                    }).join('');
+                },
+                toggleReportCategoryExclusion(catId, included) {
+                    if (included) {
+                        this._reportExcludedCategories = this._reportExcludedCategories.filter(id => id !== catId);
+                    } else if (!this._reportExcludedCategories.includes(catId)) {
+                        this._reportExcludedCategories.push(catId);
+                    }
+                    try { localStorage.setItem('kpReportExcludedCat', JSON.stringify(this._reportExcludedCategories)); } catch(e){}
+                    this.renderReport();
+                },
+                getPreviousPeriodRange(start, end) {
+                    const durationMs = end.getTime() - start.getTime();
+                    const prevEnd = new Date(start.getTime() - 86400000);
+                    const prevStart = new Date(prevEnd.getTime() - durationMs);
+                    return { start: prevStart, end: prevEnd };
+                },
                 setReportPeriod(type) {
                     this._reportPeriod = type;
                     this._reportOffset = 0;
@@ -4208,14 +4265,34 @@
                     const startStr = start.toISOString().split('T')[0], endStr = end.toISOString().split('T')[0];
                     document.getElementById('repPeriodLabel').textContent = `Periode: ${label}`;
 
-                    const tx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr);
+                    const excludedCat = this._reportExcludedCategories;
+                    const filterBtn = document.getElementById('repCategoryFilterBtn');
+                    if (filterBtn) filterBtn.textContent = excludedCat.length ? `⚙️ Filter Kategori (${excludedCat.length} disembunyikan)` : '⚙️ Filter Kategori';
+
+                    const tx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr && !excludedCat.includes(t.kategori));
                     const totIn = tx.reduce((s,t) => s + (t.pemasukan||0), 0);
                     const totOut = tx.reduce((s,t) => s + (t.pengeluaran||0), 0);
 
+                    // Perbandingan vs periode sebelumnya
+                    const prevRange = this.getPreviousPeriodRange(start, end);
+                    const prevStartStr = prevRange.start.toISOString().split('T')[0], prevEndStr = prevRange.end.toISOString().split('T')[0];
+                    const prevTx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= prevStartStr && t.tanggal <= prevEndStr && !excludedCat.includes(t.kategori));
+                    const prevIn = prevTx.reduce((s,t) => s + (t.pemasukan||0), 0);
+                    const prevOut = prevTx.reduce((s,t) => s + (t.pengeluaran||0), 0);
+                    const pctChangeHtml = (curr, prev, goodIfUp) => {
+                        if (prev === 0 && curr === 0) return '';
+                        if (prev === 0) return `<div class="text-xs" style="margin-top:0.15rem; opacity:0.85;">Baru dibanding periode lalu</div>`;
+                        const pct = ((curr - prev) / prev) * 100;
+                        const up = pct >= 0;
+                        const good = up === goodIfUp;
+                        const color = good ? 'var(--success)' : (pct === 0 ? 'inherit' : 'var(--danger)');
+                        return `<div class="text-xs" style="margin-top:0.15rem; opacity:0.9; color:${color};">${up ? '▲' : '▼'} ${Math.abs(pct).toFixed(0)}% dari periode lalu</div>`;
+                    };
+
                     document.getElementById('repSummaryCards').innerHTML = `
-                        <div class="home-mini-card bc-cash"><div class="bc-label">⬆ Pemasukan</div><div class="bc-value">${App.Utils.formatCurrency(totIn)}</div></div>
-                        <div class="home-mini-card bc-saldo"><div class="bc-label">⬇ Pengeluaran</div><div class="bc-value">${App.Utils.formatCurrency(totOut)}</div></div>
-                        <div class="home-mini-card bc-cash" style="grid-column:1/-1;"><div class="bc-label">💰 Selisih Bersih</div><div class="bc-value">${totIn - totOut >= 0 ? '+' : ''}${App.Utils.formatCurrency(totIn - totOut)}</div></div>
+                        <div class="home-mini-card bc-cash"><div class="bc-label">⬆ Pemasukan</div><div class="bc-value">${App.Utils.formatCurrency(totIn)}</div>${pctChangeHtml(totIn, prevIn, true)}</div>
+                        <div class="home-mini-card bc-saldo"><div class="bc-label">⬇ Pengeluaran</div><div class="bc-value">${App.Utils.formatCurrency(totOut)}</div>${pctChangeHtml(totOut, prevOut, false)}</div>
+                        <div class="home-mini-card bc-cash" style="grid-column:1/-1;"><div class="bc-label">💰 Selisih Bersih</div><div class="bc-value">${totIn - totOut >= 0 ? '+' : ''}${App.Utils.formatCurrency(totIn - totOut)}</div>${pctChangeHtml(totIn-totOut, prevIn-prevOut, true)}</div>
                     `;
 
                     // Agregasi harian
@@ -5263,7 +5340,8 @@
                     setTimeout(() => {
                         const { start, end, label } = App.UI.getReportDateRange();
                         const startStr = start.toISOString().split('T')[0], endStr = end.toISOString().split('T')[0];
-                        const tx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
+                        const excludedCat = App.UI._reportExcludedCategories || [];
+                        const tx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr && !excludedCat.includes(t.kategori)).sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal));
                         const totIn = tx.reduce((s,t) => s + (t.pemasukan||0), 0);
                         const totOut = tx.reduce((s,t) => s + (t.pengeluaran||0), 0);
                         const catMap = {}; tx.forEach(t => { if (t.pengeluaran) catMap[t.kategori] = (catMap[t.kategori]||0) + t.pengeluaran; });
@@ -5284,6 +5362,10 @@
 
                         doc.setTextColor(90); doc.setFontSize(8.5);
                         doc.text(`Diterbitkan pada ${terbit}`, 14, 40);
+                        if (excludedCat.length) {
+                            const hiddenNames = excludedCat.map(id => (([...App.Config.DefaultCategories, ...App.State.customCategories].find(c => c.id === id))||{}).name || id).join(', ');
+                            doc.setTextColor(150); doc.text(`Kategori disembunyikan: ${hiddenNames}`, 14, 46);
+                        }
 
                         // Ringkasan
                         let y = 50;
