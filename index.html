@@ -820,6 +820,21 @@
         }
         .qt-chip:hover { border-color: var(--primary); background: var(--primary-light); }
         .qt-chip-add { color: var(--primary); border-style: dashed; }
+
+        .rep-cat-chip {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5rem 0.85rem; border-radius: 99px; border: 1.5px solid var(--primary);
+            background: var(--primary-light); color: var(--primary-dark); cursor: pointer;
+            font-size: 0.8rem; font-weight: 700; transition: all var(--transition-fast); white-space: nowrap;
+        }
+        .rep-cat-chip:active { transform: scale(0.96); }
+        .rep-cat-chip.excluded {
+            border-color: var(--border-medium); border-style: dashed; background: var(--bg-surface-hover);
+            color: var(--text-light); text-decoration: line-through; font-weight: 600; opacity: 0.7;
+        }
+        .rep-cat-excluded-row {
+            margin-top: 0.5rem; padding-top: 0.85rem; border-top: 1px dashed var(--border-medium);
+        }
         .qt-manage-item {
             display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 0.85rem;
             border: 1px solid var(--border-light); border-radius: var(--radius-md); margin-bottom: 0.5rem; background: var(--bg-body);
@@ -1810,8 +1825,12 @@
                     <button type="button" id="repCategoryFilterBtn" class="text-xs text-primary font-semibold" style="background:none; border:none; cursor:pointer;" onclick="App.UI.toggleReportCategoryFilter()">⚙️ Filter Kategori</button>
                 </div>
                 <div id="repCategoryFilterPanel" style="display:none; margin-bottom:1rem; padding:0.9rem; background:var(--bg-body); border-radius:var(--radius-md); border:1px solid var(--border-light);">
-                    <p class="text-xs text-muted" style="margin-bottom:0.6rem;">Centang kategori yang mau ditampilkan. Yang tidak dicentang akan disembunyikan dari laporan ini (grafik, total, & PDF).</p>
-                    <div id="repCategoryFilterList" style="display:flex; flex-direction:column; gap:0.6rem;"></div>
+                    <p class="text-xs text-muted" style="margin-bottom:0.65rem;">Tap kategori untuk sembunyikan/tampilkan. Yang <span style="text-decoration:line-through;">tercoret &amp; pudar</span> berarti disembunyikan dari laporan ini.</p>
+                    <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
+                        <button type="button" class="btn btn-sm btn-outline" style="flex:1;" onclick="App.UI.setAllReportCategories(true)">✅ Tampilkan Semua</button>
+                        <button type="button" class="btn btn-sm btn-outline" style="flex:1;" onclick="App.UI.setAllReportCategories(false)">🚫 Sembunyikan Semua</button>
+                    </div>
+                    <div id="repCategoryFilterList" style="display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
                 </div>
                 <div id="repCategoryList"></div>
             </div>
@@ -4203,19 +4222,26 @@
                     const allCats = [...App.Config.DefaultCategories, ...App.State.customCategories];
                     box.innerHTML = allCats.map(c => {
                         const excluded = this._reportExcludedCategories.includes(c.id);
-                        return `<label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;">
-                            <input type="checkbox" ${excluded ? '' : 'checked'} onchange="App.UI.toggleReportCategoryExclusion('${c.id}', this.checked)">
-                            <span class="text-sm">${c.icon} ${c.name}</span>
-                        </label>`;
+                        return `<button type="button" class="rep-cat-chip ${excluded ? 'excluded' : ''}" onclick="App.UI.toggleReportCategoryExclusion('${c.id}')">
+                            <span>${excluded ? '🚫' : c.icon}</span><span>${c.name}</span>
+                        </button>`;
                     }).join('');
                 },
-                toggleReportCategoryExclusion(catId, included) {
-                    if (included) {
+                toggleReportCategoryExclusion(catId) {
+                    if (this._reportExcludedCategories.includes(catId)) {
                         this._reportExcludedCategories = this._reportExcludedCategories.filter(id => id !== catId);
-                    } else if (!this._reportExcludedCategories.includes(catId)) {
+                    } else {
                         this._reportExcludedCategories.push(catId);
                     }
                     try { localStorage.setItem('kpReportExcludedCat', JSON.stringify(this._reportExcludedCategories)); } catch(e){}
+                    this.renderReportCategoryFilter();
+                    this.renderReport();
+                },
+                setAllReportCategories(showAll) {
+                    const allCats = [...App.Config.DefaultCategories, ...App.State.customCategories];
+                    this._reportExcludedCategories = showAll ? [] : allCats.map(c => c.id);
+                    try { localStorage.setItem('kpReportExcludedCat', JSON.stringify(this._reportExcludedCategories)); } catch(e){}
+                    this.renderReportCategoryFilter();
                     this.renderReport();
                 },
                 getPreviousPeriodRange(start, end) {
@@ -4270,6 +4296,7 @@
                     if (filterBtn) filterBtn.textContent = excludedCat.length ? `⚙️ Filter Kategori (${excludedCat.length} disembunyikan)` : '⚙️ Filter Kategori';
 
                     const tx = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr && !excludedCat.includes(t.kategori));
+                    const txAll = App.State.transactions.filter(t => !t.isAdjustment && t.tanggal >= startStr && t.tanggal <= endStr);
                     const totIn = tx.reduce((s,t) => s + (t.pemasukan||0), 0);
                     const totOut = tx.reduce((s,t) => s + (t.pengeluaran||0), 0);
 
@@ -4321,17 +4348,22 @@
                         });
                     }
 
-                    // Per kategori
-                    const catMap = {};
-                    tx.forEach(t => { if (t.pengeluaran) catMap[t.kategori] = (catMap[t.kategori] || 0) + t.pengeluaran; });
-                    const catList = Object.entries(catMap).sort((a,b) => b[1] - a[1]);
+                    // Per kategori (dihitung dari semua transaksi periode ini, termasuk yang disembunyikan,
+                    // supaya kategori yang dikecualikan tetap bisa dilihat totalnya sebagai 1 baris gabungan)
+                    const catMapAll = {};
+                    txAll.forEach(t => { if (t.pengeluaran) catMapAll[t.kategori] = (catMapAll[t.kategori] || 0) + t.pengeluaran; });
+                    const visibleEntries = Object.entries(catMapAll).filter(([id]) => !excludedCat.includes(id)).sort((a,b) => b[1] - a[1]);
+                    const excludedEntries = Object.entries(catMapAll).filter(([id]) => excludedCat.includes(id));
+                    const excludedTotal = excludedEntries.reduce((s,[,amt]) => s + amt, 0);
+                    const grandTotOut = visibleEntries.reduce((s,[,amt]) => s + amt, 0) + excludedTotal;
+
                     const catBox = document.getElementById('repCategoryList');
-                    if (!catList.length) {
+                    if (!visibleEntries.length && !excludedTotal) {
                         catBox.innerHTML = `<p class="text-sm text-muted text-center" style="padding:1rem 0;">Belum ada pengeluaran di periode ini.</p>`;
                     } else {
-                        catBox.innerHTML = catList.map(([catId, amt]) => {
+                        let html = visibleEntries.map(([catId, amt]) => {
                             const catObj = [...App.Config.DefaultCategories, ...App.State.customCategories].find(c => c.id === catId) || { icon: '📦', name: catId };
-                            const perc = totOut > 0 ? (amt / totOut) * 100 : 0;
+                            const perc = grandTotOut > 0 ? (amt / grandTotOut) * 100 : 0;
                             return `<div style="margin-bottom:0.85rem;">
                                 <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
                                     <span class="text-sm font-semibold">${catObj.icon} ${catObj.name}</span>
@@ -4340,6 +4372,18 @@
                                 <div class="progress-track"><div class="progress-fill" style="width:${perc}%; background:var(--primary);"></div></div>
                             </div>`;
                         }).join('');
+                        if (excludedTotal > 0) {
+                            const perc = grandTotOut > 0 ? (excludedTotal / grandTotOut) * 100 : 0;
+                            html += `<div class="rep-cat-excluded-row">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+                                    <span class="text-sm font-semibold text-muted">🚫 Dikecualikan <span style="font-weight:400;">(${excludedEntries.length} kategori)</span></span>
+                                    <span class="text-sm font-semibold text-muted">${App.Utils.formatCurrency(excludedTotal)} <span style="font-weight:400;">(${perc.toFixed(0)}%)</span></span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" style="width:${perc}%; background:var(--text-light);"></div></div>
+                                <p class="text-xs text-muted" style="margin-top:0.4rem;">Tidak dihitung di ringkasan &amp; grafik di atas. <button type="button" onclick="App.UI.toggleReportCategoryFilter()" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; padding:0; font-size:inherit;">Atur kategori</button></p>
+                            </div>`;
+                        }
+                        catBox.innerHTML = html;
                     }
                 },
                 renderAnalytics() {
