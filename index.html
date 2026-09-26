@@ -2033,6 +2033,15 @@
                 </div>
 
                 <!-- Import, Export Area -->
+                <div class="form-group" style="padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-light);">
+                    <h3 class="font-bold" style="margin-bottom: 1rem;">🛡️ Cadangan &amp; Sampah</h3>
+                    <p class="text-xs text-muted" style="margin-bottom:0.85rem;">Data kamu otomatis dicerminkan ke penyimpanan lokal HP/laptop ini (online &amp; offline), dan transaksi yang dihapus disimpan sementara di sini.</p>
+                    <div class="grid-2" style="gap:0.75rem;">
+                        <button class="btn btn-outline" onclick="App.Backup.openTrash()">🗑️ Sampah Transaksi</button>
+                        <button class="btn btn-outline" onclick="App.Backup.openHistory()">🕒 Riwayat Cadangan</button>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <h3 class="font-bold" style="margin-bottom: 1rem;">📦 Import & Export Data</h3>
                     
@@ -2845,6 +2854,21 @@
         </div>
     </div>
     <div id="catModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('catModal')"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h2>Kategori Baru</h2><button class="modal-close" onclick="App.UI.closeModal('catModal')">&times;</button></div><div class="form-group"><label>Nama</label><input type="text" id="catName" required></div><div class="form-group"><label>Ikon (Emoji)</label><input type="text" id="catIcon" required maxlength="2"></div><div class="grid-2"><button class="btn btn-secondary" onclick="App.UI.closeModal('catModal')">Batal</button><button class="btn btn-primary" onclick="App.Handlers.addCategory()">Simpan</button></div></div></div>
+    <div id="trashModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('trashModal')">
+        <div class="modal-content" style="max-width:460px;">
+            <div class="modal-header"><h2>🗑️ Sampah Transaksi</h2><button class="modal-close" onclick="App.UI.closeModal('trashModal')">&times;</button></div>
+            <p class="text-xs text-muted" style="margin-bottom:0.85rem;">Transaksi yang dihapus disimpan di sini dulu (maks. 200 terakhir) sebelum benar-benar hilang, jadi kalau kehapus gak sengaja masih bisa dipulihkan.</p>
+            <div id="trashList" style="max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;"></div>
+            <button class="btn btn-outline btn-block" style="margin-top:1rem;" onclick="App.Backup.emptyTrash()">Kosongkan Sampah Permanen</button>
+        </div>
+    </div>
+    <div id="backupHistoryModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('backupHistoryModal')">
+        <div class="modal-content" style="max-width:460px;">
+            <div class="modal-header"><h2>🛡️ Cadangan Lokal</h2><button class="modal-close" onclick="App.UI.closeModal('backupHistoryModal')">&times;</button></div>
+            <p class="text-xs text-muted" style="margin-bottom:0.85rem;">Setiap kali data berubah, salinan sebelumnya otomatis disimpan di HP/laptop ini (10 versi terakhir) — kalau data online tiba-tiba kosong/kacau, kamu bisa pulihkan dari sini.</p>
+            <div id="backupHistoryList" style="max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.6rem;"></div>
+        </div>
+    </div>
     <div id="debtModal" class="modal-overlay" onclick="if(event.target===this) App.UI.closeModal('debtModal')">
         <div class="modal-content" style="max-width:420px;">
             <div class="modal-header"><h2>🤝 Catat Utang / Piutang</h2><button class="modal-close" onclick="App.UI.closeModal('debtModal')">&times;</button></div>
@@ -2954,7 +2978,7 @@
                 user: null,
                 isAdmin: false,
                 isPremium: true,
-                transactions: [], recurring: [], customCategories: [], goals: [], budgets: [], paylaters: [], transfers: [], debts: [], quickTemplates: [],
+                transactions: [], recurring: [], customCategories: [], goals: [], budgets: [], paylaters: [], transfers: [], debts: [], quickTemplates: [], trashedTransactions: [],
                 budgetAllocation: { total: 1300000, splits: { pokok: 50, kuliah: 20, fleksibel: 30 } },
                 categoryBucketMap: { jajan: 'pokok', uang_mingguan: 'fleksibel', shopping: 'fleksibel', gift: 'fleksibel', lainnya: 'fleksibel' },
                 settings: { reminderEnabled: false, reminderTime: '20:00', morningEnabled: false, morningTime: '08:00', budgetAlertEnabled: false, theme: 'light', accentHue: 244, themePreset: 'klasik' },
@@ -3418,19 +3442,44 @@
             DB: {
                 dbInstance: null, listener: null,
                 init() {},
+                applyData(data) {
+                    App.State.isPremium = true; App.State.transactions = data.transactions || [];
+                    App.State.recurring = data.recurring || []; App.State.customCategories = data.customCategories || [];
+                    App.State.budgets = data.budgets || []; App.State.paylaters = data.paylaters || [];
+                    App.State.transfers = data.transfers || []; App.State.debts = data.debts || []; App.State.quickTemplates = data.quickTemplates || [];
+                    App.State.trashedTransactions = data.trashedTransactions || [];
+                    if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation;
+                    if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap};
+                    if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
+                    if(data.kuliah && window.KuliahProBridge) window.KuliahProBridge.applyExternalData(data.kuliah);
+                    if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
+                },
+                getLocalMirror(uid) {
+                    try { const raw = localStorage.getItem('cloud_cache_' + uid); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
+                },
+                saveLocalMirror(uid, dataToSave) {
+                    try {
+                        const cacheKey = 'cloud_cache_' + uid;
+                        const prevRaw = localStorage.getItem(cacheKey);
+                        if (prevRaw) {
+                            try {
+                                const prev = JSON.parse(prevRaw);
+                                const histKey = 'cloud_cache_history_' + uid;
+                                let hist = []; try { hist = JSON.parse(localStorage.getItem(histKey) || '[]'); } catch(e){}
+                                hist.unshift({ savedAt: prev.updatedAt || new Date().toISOString(), txCount: (prev.transactions||[]).length, data: prev });
+                                hist = hist.slice(0, 10);
+                                localStorage.setItem(histKey, JSON.stringify(hist));
+                            } catch(e){}
+                        }
+                        localStorage.setItem(cacheKey, JSON.stringify(dataToSave));
+                    } catch(e) { console.warn('Gagal simpan cadangan lokal:', e); }
+                },
                 listen(uid) {
                     App.UI.updateSyncStatus('connecting'); if (this.listener) this.listener();
                     if (App.Auth.isDummy) {
                         App.UI.updateSyncStatus('active'); const localData = localStorage.getItem('dummy_db_' + uid);
                         if (localData) {
-                            const data = JSON.parse(localData);
-                            App.State.isPremium = true; App.State.transactions = data.transactions || [];
-                            App.State.recurring = data.recurring || []; App.State.customCategories = data.customCategories || [];
-                            App.State.budgets = data.budgets || []; App.State.paylaters = data.paylaters || [];
-                            App.State.transfers = data.transfers || []; App.State.debts = data.debts || []; App.State.quickTemplates = data.quickTemplates || []; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap};
-                            if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
-                            if(data.kuliah && window.KuliahProBridge) window.KuliahProBridge.applyExternalData(data.kuliah);
-                            if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
+                            this.applyData(JSON.parse(localData));
                         } else { this.save(); }
                         App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect();
                         if(!App.State._navInitDone){ App.State._navInitDone = true; App.UI.switchMainGroup('keuangan'); }
@@ -3441,16 +3490,29 @@
                     const dbRef = ref(this.dbInstance, `users/${uid}/appData`);
                     this.listener = onValue(dbRef, (snapshot) => {
                         App.UI.updateSyncStatus('active');
+                        const localCache = this.getLocalMirror(uid);
                         if (snapshot.exists()) {
                             const data = snapshot.val();
-                            App.State.isPremium = true; App.State.transactions = data.transactions || [];
-                            App.State.recurring = data.recurring || []; App.State.customCategories = data.customCategories || [];
-                            App.State.budgets = data.budgets || []; App.State.paylaters = data.paylaters || [];
-                            App.State.transfers = data.transfers || []; App.State.debts = data.debts || []; App.State.quickTemplates = data.quickTemplates || []; if(data.budgetAllocation) App.State.budgetAllocation = data.budgetAllocation; if(data.categoryBucketMap) App.State.categoryBucketMap = {...App.State.categoryBucketMap, ...data.categoryBucketMap};
-                            if(data.todos && window.TugasProBridge) window.TugasProBridge.applyExternalTodos(data.todos);
-                            if(data.kuliah && window.KuliahProBridge) window.KuliahProBridge.applyExternalData(data.kuliah);
-                            if(data.settings) App.State.settings = {...App.State.settings, ...data.settings};
-                        } else { this.save(); }
+                            // 🛡️ Kalau cadangan lokal di HP ini ternyata lebih baru & lebih lengkap dari yang di cloud
+                            // (misalnya sempat offline, atau data cloud sempat kereset), pakai yang lokal & dorong ulang ke cloud.
+                            const localNewer = localCache && localCache.updatedAt && (!data.updatedAt || new Date(localCache.updatedAt) > new Date(data.updatedAt)) && (localCache.transactions||[]).length >= (data.transactions||[]).length;
+                            if (localNewer) {
+                                this.applyData(localCache);
+                                this.save();
+                                App.UI.showToast('Data lokal lebih baru, disinkronkan ke cloud', 'success');
+                            } else {
+                                this.applyData(data);
+                                this.saveLocalMirror(uid, data);
+                            }
+                        } else if (localCache && (localCache.transactions||[]).length > 0) {
+                            // ⚠️ Cloud kebaca kosong padahal cadangan lokal masih ada isinya — JANGAN dianggap "user baru".
+                            // Pulihkan dari cadangan lokal supaya data lama tidak ketiban kosong.
+                            this.applyData(localCache);
+                            this.save();
+                            App.UI.showToast('Data cloud kosong, dipulihkan dari cadangan lokal di HP ini', 'success');
+                        } else {
+                            this.save();
+                        }
                         App.State.isLoading = false; App.Premium.applyState(); App.Theme.init(); App.UI.renderCategoriesSelect();
                         // Cuma pindah ke tab Keuangan sekali di awal (pas baru login/buka app), bukan tiap kali
                         // ada data baru masuk — sebelumnya ini bikin app "kelempar balik" ke Keuangan tiap kali
@@ -3464,13 +3526,17 @@
                    if (!App.State.user) return;
                    let todosData = null; try { const raw = localStorage.getItem('tugasPro.v2'); if(raw) todosData = JSON.parse(raw); } catch(e){}
                    let kuliahData = null; try { const raw = localStorage.getItem('kuliahPro.v1'); if(raw) kuliahData = JSON.parse(raw); } catch(e){}
-                   const dataToSave = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, transfers: App.State.transfers, debts: App.State.debts, quickTemplates: App.State.quickTemplates, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, todos: todosData, kuliah: kuliahData, settings: App.State.settings, updatedAt: new Date().toISOString() };
+                   const dataToSave = { isPremium: App.State.isPremium, transactions: App.State.transactions, recurring: App.State.recurring, customCategories: App.State.customCategories, budgets: App.State.budgets, paylaters: App.State.paylaters, transfers: App.State.transfers, debts: App.State.debts, quickTemplates: App.State.quickTemplates, budgetAllocation: App.State.budgetAllocation, categoryBucketMap: App.State.categoryBucketMap, trashedTransactions: App.State.trashedTransactions, todos: todosData, kuliah: kuliahData, settings: App.State.settings, updatedAt: new Date().toISOString() };
     
                  // ✅ Selalu backup settings ke backup_v6 agar persist saat refresh
                    localStorage.setItem('backup_v6', JSON.stringify({ settings: App.State.settings }));
-    
+
+                 // 🛡️ Cermin lokal (offline & online) — selalu simpan salinan penuh ke device ini dulu,
+                 // sebelum (atau meski gagal) kirim ke cloud, supaya data asli tetap aman di HP/laptop.
+                   this.saveLocalMirror(App.State.user.uid, dataToSave);
+
                    if (App.Auth.isDummy) { localStorage.setItem('dummy_db_' + App.State.user.uid, JSON.stringify(dataToSave)); return; }
-                   if (this.dbInstance) { try { set(ref(this.dbInstance, `users/${App.State.user.uid}/appData`), dataToSave); } catch(e){ console.warn('Gagal sync ke akun (diabaikan):', e); } }
+                   if (this.dbInstance) { try { set(ref(this.dbInstance, `users/${App.State.user.uid}/appData`), dataToSave); this._pendingSync = false; } catch(e){ console.warn('Gagal sync ke akun (diabaikan):', e); this._pendingSync = true; } }
               }
             },
 
@@ -3840,6 +3906,75 @@
                 deleteTemplate(idx) {
                     App.State.quickTemplates.splice(idx, 1);
                     App.DB.save(); this.render(); this.renderManageList();
+                }
+            },
+
+            Backup: {
+                openTrash() { this.renderTrash(); App.UI.showModal('trashModal'); },
+                renderTrash() {
+                    const box = document.getElementById('trashList'); if (!box) return;
+                    const items = App.State.trashedTransactions || [];
+                    if (!items.length) { box.innerHTML = '<p class="text-xs text-muted" style="padding:0.5rem 0;">Sampah kosong.</p>'; return; }
+                    box.innerHTML = items.map((t, i) => {
+                        const catObj = [...App.Config.DefaultCategories, ...App.State.customCategories].find(c => c.id === t.kategori) || { icon: '📦', name: t.kategori || '-' };
+                        const amt = t.pemasukan || t.pengeluaran || 0;
+                        const jenis = t.pemasukan ? 'Pemasukan' : 'Pengeluaran';
+                        const delDate = t._deletedAt ? App.Utils.formatDateStr(t._deletedAt.split('T')[0]) : '-';
+                        return `<div style="display:flex; align-items:center; gap:0.7rem; padding:0.7rem; background:var(--bg-body); border-radius:var(--radius-md);">
+                            <span style="font-size:1.1rem;">${catObj.icon}</span>
+                            <div style="flex:1; min-width:0;">
+                                <div class="text-sm font-semibold">${t.keterangan || catObj.name}</div>
+                                <div class="text-xs text-muted">${jenis} • ${App.Utils.formatCurrency(amt)} • Dihapus ${delDate}</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="App.Backup.restoreFromTrash(${i})">↩️ Pulihkan</button>
+                        </div>`;
+                    }).join('');
+                },
+                restoreFromTrash(idx) {
+                    const items = App.State.trashedTransactions || [];
+                    const tx = items[idx]; if (!tx) return;
+                    const restored = { ...tx }; delete restored._deletedAt;
+                    App.State.transactions.push(restored);
+                    App.State.trashedTransactions.splice(idx, 1);
+                    App.DB.save(); this.renderTrash(); App.UI.renderAll();
+                    App.UI.showToast('Transaksi dipulihkan', 'success');
+                },
+                async emptyTrash() {
+                    const yes = await App.UI.confirm('Semua transaksi di Sampah akan dihapus permanen. Lanjutkan?');
+                    if (!yes) return;
+                    App.State.trashedTransactions = [];
+                    App.DB.save(); this.renderTrash();
+                    App.UI.showToast('Sampah dikosongkan', 'success');
+                },
+                openHistory() { this.renderHistory(); App.UI.showModal('backupHistoryModal'); },
+                renderHistory() {
+                    const box = document.getElementById('backupHistoryList'); if (!box) return;
+                    if (!App.State.user) { box.innerHTML = '<p class="text-xs text-muted">Belum login.</p>'; return; }
+                    let hist = []; try { hist = JSON.parse(localStorage.getItem('cloud_cache_history_' + App.State.user.uid) || '[]'); } catch(e){}
+                    if (!hist.length) { box.innerHTML = '<p class="text-xs text-muted" style="padding:0.5rem 0;">Belum ada riwayat cadangan.</p>'; return; }
+                    box.innerHTML = hist.map((h, i) => {
+                        const when = h.savedAt ? new Date(h.savedAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
+                        return `<div style="display:flex; align-items:center; gap:0.7rem; padding:0.7rem; background:var(--bg-body); border-radius:var(--radius-md);">
+                            <span style="font-size:1.1rem;">🕒</span>
+                            <div style="flex:1; min-width:0;">
+                                <div class="text-sm font-semibold">${when}</div>
+                                <div class="text-xs text-muted">${h.txCount} transaksi tersimpan</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="App.Backup.restoreSnapshot(${i})">↩️ Pulihkan</button>
+                        </div>`;
+                    }).join('');
+                },
+                async restoreSnapshot(idx) {
+                    if (!App.State.user) return;
+                    const yes = await App.UI.confirm('Data saat ini akan diganti dengan cadangan ini. Lanjutkan?');
+                    if (!yes) return;
+                    let hist = []; try { hist = JSON.parse(localStorage.getItem('cloud_cache_history_' + App.State.user.uid) || '[]'); } catch(e){}
+                    const entry = hist[idx]; if (!entry || !entry.data) return;
+                    App.DB.applyData(entry.data);
+                    App.DB.save();
+                    App.UI.closeModal('backupHistoryModal');
+                    App.UI.renderAll();
+                    App.UI.showToast('Cadangan dipulihkan', 'success');
                 }
             },
 
@@ -4831,7 +4966,18 @@
                     App.State.transactions[index] = { ...App.State.transactions[index], tanggal: document.getElementById('edit-tanggal').value, jenisAkun, subWallet: jenisAkun === 'saldo' ? (document.getElementById('edit-sub-wallet').value || null) : null, pemasukan: App.Utils.parseCurrency(document.getElementById('edit-pemasukan').value), pengeluaran: App.Utils.parseCurrency(document.getElementById('edit-pengeluaran').value), kategori: document.getElementById('edit-kategori').value, keterangan: document.getElementById('edit-keterangan').value.trim(), excludeFromBudget: document.getElementById('edit-exclude-budget').checked };
                     App.DB.save(); App.UI.closeModal('editModal'); App.UI.renderAll(); App.UI.showToast('Perubahan disimpan!', 'success');
                 },
-                async deleteTx(id) { const yes = await App.UI.confirm('Transaksi ini akan dihapus secara permanen.'); if(!yes) return; App.State.transactions = App.State.transactions.filter(t => t.id !== id); App.DB.save(); App.UI.closeModal('editModal'); App.UI.renderAll(); App.UI.showToast('Transaksi Dihapus', 'success'); },
+                async deleteTx(id) {
+                    const yes = await App.UI.confirm('Transaksi ini akan dipindah ke Sampah dulu (bisa dipulihkan lewat menu Pengaturan).');
+                    if(!yes) return;
+                    const tx = App.State.transactions.find(t => t.id === id);
+                    App.State.transactions = App.State.transactions.filter(t => t.id !== id);
+                    if (tx) {
+                        if (!App.State.trashedTransactions) App.State.trashedTransactions = [];
+                        App.State.trashedTransactions.unshift({ ...tx, _deletedAt: new Date().toISOString() });
+                        App.State.trashedTransactions = App.State.trashedTransactions.slice(0, 200);
+                    }
+                    App.DB.save(); App.UI.closeModal('editModal'); App.UI.renderAll(); App.UI.showToast('Transaksi dipindah ke Sampah', 'success');
+                },
                 async deleteAdjustment(id) { const yes = await App.UI.confirm('Hapus catatan penyesuaian ini?'); if(!yes) return; App.State.transactions = App.State.transactions.filter(t => t.id !== id); App.DB.save(); App.UI.renderAll(); App.UI.showToast('Penyesuaian dihapus', 'success'); },
                 debounceSearch() { clearTimeout(App.State.searchTimer); App.State.searchTimer = setTimeout(() => App.UI.renderHistory(), 300); },
                 resetFilters() { document.getElementById('filterStart').value = ''; document.getElementById('filterEnd').value = ''; document.getElementById('filterSearch').value = ''; document.getElementById('filterCategory').value = ''; document.getElementById('filterAccount').value = ''; document.getElementById('filterType').value = 'all'; App.UI.renderHistory(); },
@@ -5483,6 +5629,11 @@
                 if (typeof __firebase_config !== 'undefined') { const canvasConfig = JSON.parse(__firebase_config); this.Config.Firebase.apiKey = canvasConfig.apiKey; this.Config.Firebase.authDomain = canvasConfig.authDomain; this.Config.Firebase.projectId = canvasConfig.projectId; this.Config.Firebase.storageBucket = canvasConfig.storageBucket; this.Config.Firebase.messagingSenderId = canvasConfig.messagingSenderId; this.Config.Firebase.appId = canvasConfig.appId; }
                 const fApp = initializeApp(this.Config.Firebase); this.Auth.init(fApp); this.DB.dbInstance = getDatabase(fApp);
                 const savedSet = localStorage.getItem('backup_v6'); if(savedSet) { try { const parsed = JSON.parse(savedSet); if(parsed.settings) this.State.settings = {...this.State.settings, ...parsed.settings}; } catch(e){} }
+
+                // 📶 Pantau koneksi: kalau offline, tandai statusnya; begitu online lagi, coba sinkron ulang
+                // supaya perubahan yang sempat cuma tersimpan lokal ikut terkirim ke cloud.
+                window.addEventListener('offline', () => this.UI.updateSyncStatus('error'));
+                window.addEventListener('online', () => { if (this.State.user) { this.DB.save(); this.UI.updateSyncStatus('active'); this.UI.showToast('Kembali online, menyinkronkan data...', 'success'); } });
             }
         };
 
