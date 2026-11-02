@@ -1,0 +1,166 @@
+/* ==========================================================================
+   TEMA PRESET — bukan cuma ganti warna aksen, tapi seluruh nuansa (background,
+   radius, shadow, kadang font) supaya benar-benar terasa beda dan gak monoton
+   ========================================================================== */
+[data-theme-preset="midnight"] {
+    --bg-body: #0a0f1e; --bg-surface: #131c31; --bg-surface-hover: #1c2942; --bg-glass: rgba(19,28,49,0.85);
+    --text-main: #e8ecf8; --text-muted: #93a1c4; --text-light: #5d6c90;
+    --border-light: #222f52; --border-medium: #2d3d68;
+    --primary-light: hsla(var(--hue-primary), var(--sat-primary), 60%, 0.18);
+    --success-light: rgba(16,185,129,0.15); --danger-light: rgba(239,68,68,0.15); --warning-light: rgba(245,158,11,0.15);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+    --shadow-md: 0 8px 20px -4px rgba(56,80,200,0.25);
+    --shadow-lg: 0 20px 45px -8px rgba(56,80,200,0.35);
+    --radius-sm: 10px; --radius-md: 16px; --radius-lg: 22px; --radius-xl: 30px;
+}
+[data-theme-preset="midnight"] body { font-family: 'Space Grotesk', sans-serif; }
+[data-theme-preset="midnight"] .ambient-bg {
+    background: radial-gradient(circle at 20% 0%, hsla(var(--hue-primary), var(--sat-primary), 55%, 0.28) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(14,165,233,0.16) 0%, transparent 55%);
+}
+
+[data-theme-preset="sunset"] {
+    --bg-body: #fbf2e7; --bg-surface: #fffaf2; --bg-surface-hover: #f6ead9; --bg-glass: rgba(255,250,242,0.88);
+    --text-main: #3e2c1e; --text-muted: #8a7259; --text-light: #b8a288;
+    --border-light: #ecdcc4; --border-medium: #ddc6a0;
+    --shadow-sm: 0 1px 2px rgba(120,72,20,0.08);
+    --shadow-md: 0 8px 20px -4px rgba(120,72,20,0.12);
+    --shadow-lg: 0 20px 45px -8px rgba(120,72,20,0.16);
+    --radius-sm: 10px; --radius-md: 16px; --radius-lg: 24px; --radius-xl: 32px;
+}
+[data-theme-preset="sunset"] body { font-family: 'Fraunces', serif; }
+[data-theme-preset="sunset"] .ambient-bg {
+    background: radial-gradient(circle at 50% 0%, rgba(217,119,6,0.18) 0%, transparent 55%),
+                radial-gradient(circle at 90% 100%, rgba(220,38,38,0.10) 0%, transparent 50%);
+}
+[data-theme-preset="sunset"][data-theme="dark"] {
+    --bg-body: #241a12; --bg-surface: #2f2318; --bg-surface-hover: #3a2c1e; --bg-glass: rgba(47,35,24,0.88);
+    --text-main: #f5e9da; --text-muted: #c2a98c; --text-light: #8a7259;
+    --border-light: #4a3826; --border-medium: #5c4732;
+}
+
+[data-theme-preset="forest"] {
+    --bg-body: #f2f6ef; --bg-surface: #ffffff; --bg-surface-hover: #e9f1e3; --bg-glass: rgba(255,255,255,0.88);
+    --text-main: #223420; --text-muted: #61765b; --text-light: #97a892;
+    --border-light: #dbe8d4; --border-medium: #c1d5b8;
+    --shadow-sm: 0 1px 2px rgba(24,60,16,0.06);
+    --shadow-md: 0 8px 20px -4px rgba(24,60,16,0.10);
+    --shadow-lg: 0 20px 45px -8px rgba(24,60,16,0.14);
+    --radius-sm: 6px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 24px;
+}
+[data-theme-preset="forest"] .ambient-bg {
+    background: radial-gradient(circle at 25% 0%, rgba(34,139,34,0.14) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(101,163,13,0.12) 0%, transparent 55%);
+}
+[data-theme-preset="forest"][data-theme="dark"] {
+    --bg-body: #10190e; --bg-surface: #172316; --bg-surface-hover: #1f2e1c; --bg-glass: rgba(23,35,22,0.88);
+    --text-main: #e6f0e2; --text-muted: #9db396; --text-light: #647a5f;
+    --border-light: #263b22; --border-medium: #32492c;
+}
+
+[data-theme-preset="mono"] {
+    --sat-primary: 6%;
+    --bg-body: #fafafa; --bg-surface: #ffffff; --bg-surface-hover: #eeeeef; --bg-glass: rgba(255,255,255,0.92);
+    --text-main: #18181b; --text-muted: #71717a; --text-light: #a1a1aa;
+    --border-light: #e4e4e7; --border-medium: #d4d4d8;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 3px 10px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 24px rgba(0,0,0,0.08);
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 14px;
+}
+[data-theme-preset="mono"] body { font-family: 'Space Grotesk', sans-serif; }
+[data-theme-preset="mono"] .ambient-bg { background: radial-gradient(circle at 50% 0%, rgba(0,0,0,0.035) 0%, transparent 60%); }
+[data-theme-preset="mono"][data-theme="dark"] {
+    --sat-primary: 6%;
+    --bg-body: #0a0a0b; --bg-surface: #151515; --bg-surface-hover: #202023; --bg-glass: rgba(21,21,23,0.92);
+    --text-main: #f4f4f5; --text-muted: #a1a1aa; --text-light: #71717a;
+    --border-light: #27272a; --border-medium: #3f3f46;
+}
+
+[data-theme-preset="aurora"] {
+    --bg-body: #f6f3ff; --bg-surface: rgba(255,255,255,0.68); --bg-surface-hover: rgba(255,255,255,0.85); --bg-glass: rgba(255,255,255,0.6);
+    --text-main: #201c3d; --text-muted: #6c6398; --text-light: #a49dc7;
+    --border-light: rgba(139,92,246,0.18); --border-medium: rgba(139,92,246,0.3);
+    --shadow-sm: 0 1px 2px rgba(109,40,217,0.08);
+    --shadow-md: 0 10px 26px -6px rgba(109,40,217,0.16);
+    --shadow-lg: 0 26px 55px -10px rgba(109,40,217,0.22);
+    --radius-sm: 12px; --radius-md: 18px; --radius-lg: 26px; --radius-xl: 34px;
+}
+[data-theme-preset="aurora"] .card, [data-theme-preset="aurora"] .progress-card, [data-theme-preset="aurora"] .app-header, [data-theme-preset="aurora"] .bottom-nav {
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+[data-theme-preset="aurora"] .ambient-bg {
+    background: radial-gradient(circle at 12% 15%, rgba(236,72,153,0.22) 0%, transparent 45%),
+                radial-gradient(circle at 88% 20%, rgba(59,130,246,0.22) 0%, transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(139,92,246,0.22) 0%, transparent 50%);
+}
+[data-theme-preset="aurora"][data-theme="dark"] {
+    --bg-body: #14102b; --bg-surface: rgba(30,24,58,0.68); --bg-surface-hover: rgba(38,31,72,0.85); --bg-glass: rgba(30,24,58,0.6);
+    --text-main: #ede9fe; --text-muted: #a89fd6; --text-light: #776ea3;
+    --border-light: rgba(139,92,246,0.22); --border-medium: rgba(139,92,246,0.35);
+}
+
+[data-theme-preset="biru"] {
+    --bg-body: #f1f5f9; --bg-surface: #ffffff; --bg-surface-hover: #e2e8f0; --bg-glass: rgba(255,255,255,0.88);
+    --text-main: #1e293b; --text-muted: #64748b; --text-light: #94a3b8;
+    --border-light: #e2e8f0; --border-medium: #cbd5e1;
+    --shadow-sm: 0 1px 2px rgba(51,65,85,0.06);
+    --shadow-md: 0 6px 16px -4px rgba(51,65,85,0.10);
+    --shadow-lg: 0 18px 40px -8px rgba(51,65,85,0.14);
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 24px;
+}
+[data-theme-preset="biru"] .ambient-bg {
+    background: radial-gradient(circle at 50% 0%, rgba(71,85,105,0.14) 0%, transparent 55%),
+                radial-gradient(circle at 90% 90%, rgba(100,116,139,0.10) 0%, transparent 50%);
+}
+[data-theme-preset="biru"][data-theme="dark"] {
+    --bg-body: #0f172a; --bg-surface: #1e293b; --bg-surface-hover: #293548; --bg-glass: rgba(30,41,59,0.88);
+    --text-main: #f1f5f9; --text-muted: #94a3b8; --text-light: #64748b;
+    --border-light: #2d3b50; --border-medium: #3c4c63;
+}
+
+[data-theme-preset="kuning"] {
+    --bg-body: #f5f5f4; --bg-surface: #ffffff; --bg-surface-hover: #e7e5e4; --bg-glass: rgba(255,255,255,0.88);
+    --text-main: #292524; --text-muted: #78716c; --text-light: #a8a29e;
+    --border-light: #e7e5e4; --border-medium: #d6d3d1;
+    --shadow-sm: 0 1px 2px rgba(87,83,78,0.06);
+    --shadow-md: 0 6px 16px -4px rgba(87,83,78,0.10);
+    --shadow-lg: 0 18px 40px -8px rgba(87,83,78,0.14);
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 24px;
+}
+[data-theme-preset="kuning"] .ambient-bg {
+    background: radial-gradient(circle at 50% 0%, rgba(217,160,20,0.14) 0%, transparent 55%),
+                radial-gradient(circle at 90% 90%, rgba(168,162,158,0.12) 0%, transparent 50%);
+}
+[data-theme-preset="kuning"][data-theme="dark"] {
+    --bg-body: #1c1917; --bg-surface: #292524; --bg-surface-hover: #37312c; --bg-glass: rgba(41,37,36,0.88);
+    --text-main: #f5f5f4; --text-muted: #a8a29e; --text-light: #78716c;
+    --border-light: #3a332d; --border-medium: #4a4038;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-body); color: var(--text-main);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+.ambient-bg {
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 0%, var(--primary-light) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
+    z-index: -1; pointer-events: none; transition: background 0.5s ease;
+}
+
+.app-container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 2.5rem 84px; display: none; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 640px) { .app-container { padding: 1rem 1rem 2rem 76px; } .grid-2 { grid-template-columns: 1fr; gap: 0.75rem; } }
+
+h1, h2, h3, h4 { font-weight: 700; color: var(--text-main); letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+p { color: var(--text-muted); }
+.text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
+.font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+.text-success { color: var(--success); } .text-danger { color: var(--danger); } .text-primary { color: var(--primary); }
+.text-center { text-align: center; }

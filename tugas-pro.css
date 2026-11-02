@@ -1,0 +1,299 @@
+#tabTodo {
+    /* Disamakan dengan palet & token desain Keuangan Pro (bukan warna sendiri) */
+    --canvas: var(--bg-body);
+    --surface: var(--bg-surface);
+    --surface-2: var(--bg-surface-hover);
+    --ink: var(--text-main);
+    --ink-soft: var(--text-main);
+    --muted: var(--text-muted);
+    --faint: var(--text-light);
+    --border: var(--border-medium);
+    --border-soft: var(--border-light);
+    --accent: var(--primary);
+    --accent-hover: var(--primary-dark);
+    --accent-tint: var(--primary-light);
+    --accent-tint-2: var(--primary-light);
+    --p-high: var(--danger);
+    --p-high-tint: var(--danger-light);
+    --p-med: var(--warning);
+    --p-med-tint: var(--warning-light);
+    --p-low: var(--primary);
+    --p-low-tint: var(--primary-light);
+    --done: var(--success);
+    --done-tint: var(--success-light);
+    --loop: var(--primary-dark);
+    --loop-tint: var(--primary-light);
+
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+    --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+
+    --r-sm: var(--radius-sm); --r-md: var(--radius-md); --r-lg: var(--radius-lg); --r-xl: var(--radius-xl);
+    --sh-sm: var(--shadow-sm);
+    --sh-md: var(--shadow-md);
+    --sh-lg: var(--shadow-lg);
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+    --z-drawer: 40; --z-modal: 60; --z-toast: 80;
+  }#tabTodo * { box-sizing: border-box; margin: 0; padding: 0; }#tabTodo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--canvas);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }#tabTodo h1, #tabTodo h2, #tabTodo h3 { text-wrap: balance; font-weight: 700; }#tabTodo ::selection { background: var(--accent-tint-2); }#tabTodo button, #tabTodo input, #tabTodo textarea, #tabTodo select { font: inherit; color: inherit; }#tabTodo button { cursor: pointer; background: none; border: none; }#tabTodo input, #tabTodo textarea { background: none; border: none; outline: none; }#tabTodo :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }#tabTodo /* ============ APP SHELL ============ */
+  .app { display: grid; grid-template-columns: 272px 1fr; height: 100dvh; }#tabTodo /* ============ SIDEBAR ============ */
+  .side {
+    background: var(--surface-2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: var(--sp-5) 0;
+    overflow-y: auto;
+  }#tabTodo .brand {
+    display: flex; align-items: center; gap: var(--sp-3);
+    padding: 0 var(--sp-5) var(--sp-5);
+  }#tabTodo .brand-mark {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: var(--accent); color: white;
+    display: grid; place-items: center; flex-shrink: 0;
+    box-shadow: var(--sh-sm);
+  }#tabTodo .brand-name {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.32rem; font-weight: 600;
+    letter-spacing: -0.01em; line-height: 1.1;
+  }#tabTodo .brand-sub { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }#tabTodo .side-add {
+    margin: 0 var(--sp-4) var(--sp-5); display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--accent); color: white; padding: 11px; border-radius: var(--r-md);
+    font-weight: 600; font-size: 0.92rem; box-shadow: var(--sh-sm);
+    transition: background .15s var(--ease-out), transform .1s var(--ease-out);
+  }#tabTodo .side-add:hover { background: var(--accent-hover); }#tabTodo .side-add:active { transform: scale(0.98); }#tabTodo .side-section { padding: 0 var(--sp-3); margin-bottom: var(--sp-5); }#tabTodo .side-label {
+    font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--faint);
+    padding: 0 var(--sp-3); margin-bottom: var(--sp-2);
+    display: flex; align-items: center; justify-content: space-between;
+  }#tabTodo .side-label button { color: var(--faint); display: grid; place-items: center; padding: 3px; border-radius: 6px; transition: all .15s var(--ease-out); }#tabTodo .side-label button:hover { color: var(--accent); background: var(--accent-tint); }#tabTodo .nav-item {
+    display: flex; align-items: center; gap: var(--sp-3);
+    width: 100%; padding: 9px var(--sp-3); border-radius: var(--r-sm);
+    color: var(--ink-soft); font-size: 0.92rem; font-weight: 500;
+    transition: background .15s var(--ease-out), color .15s var(--ease-out);
+    text-align: left; position: relative;
+  }#tabTodo .nav-item:hover { background: var(--surface); color: var(--ink); }#tabTodo .nav-item.active { background: var(--accent-tint); color: var(--accent-hover); font-weight: 600; }#tabTodo .nav-item .ico { width: 18px; height: 18px; flex-shrink: 0; }#tabTodo .nav-item .label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }#tabTodo .nav-item .count {
+    font-size: 0.76rem; color: var(--muted); font-weight: 500;
+    font-variant-numeric: tabular-nums; min-width: 20px; text-align: right;
+  }#tabTodo .nav-item.active .count { color: var(--accent-hover); }#tabTodo .proj-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin: 0 4px; }#tabTodo .proj-del { opacity: 0; color: var(--faint); padding: 2px; border-radius: 5px; transition: opacity .12s; }#tabTodo .nav-item:hover .proj-del { opacity: 1; }#tabTodo .proj-del:hover { color: var(--p-high); background: var(--p-high-tint); }#tabTodo .side-foot { margin-top: auto; padding: var(--sp-4) var(--sp-5) 0; }#tabTodo .storage-note { font-size: 0.72rem; color: var(--faint); line-height: 1.4; display: flex; gap: 7px; align-items: flex-start; }#tabTodo /* ============ MAIN ============ */
+  .main { display: flex; flex-direction: column; overflow: hidden; }#tabTodo .topbar {
+    padding: var(--sp-5) var(--sp-6) var(--sp-4);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex; flex-direction: column; gap: var(--sp-4);
+  }#tabTodo .top-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4); }#tabTodo .view-meta { min-width: 0; }#tabTodo .view-title {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(1.6rem, 3vw, 2.15rem);
+    font-weight: 600; letter-spacing: -0.015em; line-height: 1.05;
+  }#tabTodo .view-date { font-size: 0.9rem; color: var(--muted); margin-top: 3px; }#tabTodo .progress-wrap { display: flex; align-items: center; gap: var(--sp-4); flex-shrink: 0; }#tabTodo .progress-txt { text-align: right; }#tabTodo .progress-num { font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }#tabTodo .progress-lbl { font-size: 0.76rem; color: var(--muted); }#tabTodo .ring { --pct: 0; width: 52px; height: 52px; transform: rotate(-90deg); }#tabTodo .ring circle { fill: none; stroke-width: 6; stroke-linecap: round; }#tabTodo .ring .track { stroke: var(--border); }#tabTodo .ring .fill { stroke: var(--done); stroke-dasharray: 138.2; stroke-dashoffset: calc(138.2 - 138.2 * var(--pct)); transition: stroke-dashoffset .6s var(--ease-out); }#tabTodo .controls { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }#tabTodo .search {
+    display: flex; align-items: center; gap: var(--sp-2);
+    background: var(--surface-2); border: 1px solid transparent;
+    border-radius: var(--r-md); padding: 7px var(--sp-3); flex: 1; min-width: 180px; max-width: 340px;
+    transition: border-color .15s, background .15s;
+  }#tabTodo .search:focus-within { border-color: var(--accent); background: var(--surface); }#tabTodo .search .ico { color: var(--muted); width: 16px; height: 16px; flex-shrink: 0; }#tabTodo .search input { flex: 1; font-size: 0.9rem; }#tabTodo .search input::placeholder { color: var(--faint); }#tabTodo .search .clr { color: var(--faint); display: none; padding: 2px; border-radius: 5px; }#tabTodo .search.has-val .clr { display: grid; place-items: center; }#tabTodo .seg { display: flex; background: var(--surface-2); border-radius: var(--r-md); padding: 3px; }#tabTodo .seg button {
+    padding: 6px 12px; border-radius: 9px; font-size: 0.83rem; font-weight: 500;
+    color: var(--muted); transition: all .15s var(--ease-out); white-space: nowrap;
+  }#tabTodo .seg button.active { background: var(--surface); color: var(--ink); box-shadow: var(--sh-sm); font-weight: 600; }#tabTodo .sort {
+    display: flex; align-items: center; gap: 6px; padding: 7px 11px;
+    background: var(--surface-2); border-radius: var(--r-md);
+    font-size: 0.83rem; color: var(--ink-soft); font-weight: 500;
+    transition: background .15s;
+  }#tabTodo .sort:hover { background: var(--border-soft); }#tabTodo .sort select { cursor: pointer; font-weight: 500; }#tabTodo .icon-btn {
+    display: grid; place-items: center; width: 36px; height: 36px;
+    border-radius: var(--r-md); background: var(--surface-2); color: var(--ink-soft);
+    transition: all .15s var(--ease-out);
+  }#tabTodo .icon-btn:hover { background: var(--border-soft); color: var(--ink); }#tabTodo .menu-btn { display: none; }#tabTodo /* ============ LIST ============ */
+  .scroll { flex: 1; overflow-y: auto; padding: var(--sp-5) var(--sp-6) var(--sp-8); }#tabTodo .group-head {
+    display: flex; align-items: center; gap: var(--sp-2);
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin: var(--sp-5) 0 var(--sp-2); padding: 0 var(--sp-2);
+  }#tabTodo .group-head:first-child { margin-top: var(--sp-2); }#tabTodo .group-head .gcount { color: var(--faint); font-weight: 500; }#tabTodo .group-head .line { flex: 1; height: 1px; background: var(--border-soft); }#tabTodo .group-head.overdue { color: var(--p-high); }#tabTodo .task {
+    display: flex; align-items: flex-start; gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-3); border-radius: var(--r-md);
+    transition: background .14s var(--ease-out);
+    position: relative; border: 1px solid transparent;
+  }#tabTodo .task:hover { background: var(--surface); border-color: var(--border-soft); }#tabTodo .task.dragging { opacity: 0.4; }#tabTodo .task.drop-above::before, #tabTodo .task.drop-below::after {
+    content: ''; position: absolute; left: 40px; right: 8px; height: 2px;
+    background: var(--accent); border-radius: 2px;
+  }#tabTodo .task.drop-above::before { top: -1px; }#tabTodo .task.drop-below::after { bottom: -1px; }#tabTodo .task.looping .check { animation: spin .5s var(--ease-out); }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }#tabTodo .drag-h {
+    opacity: 0; color: var(--faint); cursor: grab; padding-top: 3px;
+    transition: opacity .12s; margin-left: -6px;
+  }#tabTodo .task:hover .drag-h { opacity: 1; }#tabTodo .drag-h:active { cursor: grabbing; }#tabTodo .check {
+    width: 22px; height: 22px; border: 2px solid var(--faint); border-radius: 7px;
+    flex-shrink: 0; margin-top: 1px; display: grid; place-items: center;
+    transition: all .18s var(--ease-out); color: white; position: relative;
+  }#tabTodo .check:hover { border-color: var(--done); }#tabTodo .check svg { width: 13px; height: 13px; opacity: 0; transform: scale(0.5); transition: all .18s var(--ease-out); }#tabTodo .task.done .check { background: var(--done); border-color: var(--done); }#tabTodo .task.done .check svg { opacity: 1; transform: scale(1); }#tabTodo .check.pri-hi { border-color: var(--p-high); }#tabTodo .check.pri-md { border-color: var(--p-med); }#tabTodo .check.is-loop { border-radius: 50%; }#tabTodo .check.is-loop:hover { border-color: var(--loop); }#tabTodo .t-body { flex: 1; min-width: 0; cursor: pointer; }#tabTodo .t-title {
+    font-size: 0.96rem; color: var(--ink); line-height: 1.4; word-break: break-word;
+    transition: color .18s var(--ease-out);
+  }#tabTodo .task.done .t-title { color: var(--faint); text-decoration: line-through; text-decoration-color: var(--border); }#tabTodo .t-meta { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: 5px; }#tabTodo .t-meta:empty { display: none; }#tabTodo .badge {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 500;
+    color: var(--muted); font-variant-numeric: tabular-nums;
+  }#tabTodo .badge .ico { width: 13px; height: 13px; }#tabTodo .badge.due-over { color: var(--p-high); font-weight: 600; }#tabTodo .badge.due-today { color: var(--accent); font-weight: 600; }#tabTodo .badge.pri { padding: 1px 8px; border-radius: 999px; font-weight: 600; }#tabTodo .badge.pri.hi { background: var(--p-high-tint); color: var(--p-high); }#tabTodo .badge.pri.md { background: var(--p-med-tint); color: var(--warning-dark); }#tabTodo .badge.pri.lo { background: var(--p-low-tint); color: var(--p-low); }#tabTodo .badge.proj .proj-dot { margin: 0; }#tabTodo .badge.tag { color: var(--accent-hover); }#tabTodo .badge.loop { color: var(--loop); font-weight: 600; }#tabTodo .badge.sub .ico { width: 12px; height: 12px; }#tabTodo .t-actions { display: flex; align-items: center; gap: 2px; opacity: 0; transition: opacity .12s; }#tabTodo .task:hover .t-actions, #tabTodo .task:focus-within .t-actions { opacity: 1; }#tabTodo .t-actions button { color: var(--faint); padding: 6px; border-radius: 7px; display: grid; place-items: center; transition: all .14s var(--ease-out); }#tabTodo .t-actions button:hover { color: var(--ink); background: var(--surface-2); }#tabTodo .t-actions button.del:hover { color: var(--p-high); background: var(--p-high-tint); }#tabTodo /* ============ EMPTY ============ */
+  .empty { text-align: center; padding: var(--sp-8) var(--sp-4); max-width: 380px; margin: 0 auto; }#tabTodo .empty-art {
+    width: 76px; height: 76px; margin: 0 auto var(--sp-4); border-radius: var(--r-xl);
+    background: var(--accent-tint); color: var(--accent); display: grid; place-items: center;
+  }#tabTodo .empty h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; margin-bottom: var(--sp-2); font-weight: 500; }#tabTodo .empty p { color: var(--muted); font-size: 0.92rem; margin-bottom: var(--sp-4); }#tabTodo .empty-cta { display: inline-flex; align-items: center; gap: 7px; background: var(--accent); color: white; padding: 9px 18px; border-radius: var(--r-md); font-weight: 600; font-size: 0.9rem; transition: background .15s; }#tabTodo .empty-cta:hover { background: var(--accent-hover); }#tabTodo /* ============ MODAL ============ */
+  dialog { border: none; padding: 0; background: none; color: inherit; max-height: 100dvh; }#tabTodo dialog::backdrop { background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(2px); }#tabTodo dialog[open] { animation: modalIn .3s var(--ease-out); }#tabTodo dialog[open]::backdrop { animation: fadeIn .3s var(--ease-out); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }#tabTodo .modal {
+    width: min(560px, calc(100vw - 32px)); background: var(--surface);
+    border-radius: var(--r-xl); box-shadow: var(--sh-lg); overflow: hidden;
+    max-height: calc(100dvh - 48px); display: flex; flex-direction: column;
+  }#tabTodo .modal-head {
+    display: flex; align-items: flex-start; gap: var(--sp-3);
+    padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  }#tabTodo .modal-head .check { width: 26px; height: 26px; margin-top: 4px; }#tabTodo .modal-head .check svg { width: 15px; height: 15px; }#tabTodo .modal-head-title { flex: 1; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }#tabTodo .m-title {
+    flex: 1; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; font-weight: 500;
+    line-height: 1.25; resize: none; overflow: hidden;
+  }#tabTodo .m-title.done { color: var(--faint); text-decoration: line-through; }#tabTodo .modal-close { color: var(--muted); padding: 6px; border-radius: 8px; transition: all .14s; }#tabTodo .modal-close:hover { background: var(--surface-2); color: var(--ink); }#tabTodo .modal-body { padding: 0 var(--sp-5); overflow-y: auto; }#tabTodo .field { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) 0; border-top: 1px solid var(--border-soft); }#tabTodo .field.top { align-items: flex-start; }#tabTodo .field.first { border-top: none; }#tabTodo .field-lbl { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.88rem; width: 108px; flex-shrink: 0; }#tabTodo .field-lbl .ico { width: 16px; height: 16px; }#tabTodo .field-ctl { flex: 1; min-width: 0; }#tabTodo .field-ctl select, #tabTodo .field-ctl input, #tabTodo .field-ctl textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--r-sm);
+    font-size: 0.9rem; background: var(--surface-2); cursor: pointer; transition: border-color .15s;
+    font-family: inherit;
+  }#tabTodo .field-ctl input[type=text] { cursor: text; }#tabTodo .field-ctl select:focus, #tabTodo .field-ctl input:focus, #tabTodo .field-ctl textarea:focus { border-color: var(--accent); background: var(--surface); }#tabTodo .big-title-input {
+    width: 100%; font-size: 1.15rem; padding: 4px 0; font-weight: 500; cursor: text !important;
+    border: none !important; background: none !important;
+  }#tabTodo .m-notes { min-height: 60px; resize: vertical; line-height: 1.55; cursor: text !important; }#tabTodo /* ============ LOOP CARD ============ */
+  .loop-block { padding: var(--sp-4) 0; border-top: 1px solid var(--border-soft); }#tabTodo .loop-toggle-row { display: flex; align-items: center; gap: var(--sp-3); }#tabTodo .loop-toggle-row .field-lbl { width: auto; }#tabTodo .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; margin-left: auto; }#tabTodo .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }#tabTodo .switch .track { position: absolute; inset: 0; background: var(--border); border-radius: 999px; transition: background .2s var(--ease-out); }#tabTodo .switch .knob { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; box-shadow: var(--sh-sm); transition: transform .22s var(--ease-out); }#tabTodo .switch input:checked ~ .track { background: var(--loop); }#tabTodo .switch input:checked ~ .knob { transform: translateX(18px); }#tabTodo .loop-panel { margin-top: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); }#tabTodo .loop-panel.hide { display: none; }#tabTodo .every-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }#tabTodo .every-row .lead { font-size: 0.92rem; color: var(--ink-soft); }#tabTodo .num-step { display: inline-flex; align-items: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }#tabTodo .num-step button { width: 32px; height: 38px; display: grid; place-items: center; color: var(--muted); transition: background .14s, color .14s; }#tabTodo .num-step button:hover { background: var(--border-soft); color: var(--ink); }#tabTodo .num-step input { width: 52px; text-align: center; font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; border: none; background: none; -moz-appearance: textfield; }#tabTodo .num-step input::-webkit-outer-spin-button, #tabTodo .num-step input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }#tabTodo .unit-sel { padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); font-size: 0.92rem; font-weight: 500; cursor: pointer; }#tabTodo .unit-sel:focus { border-color: var(--accent); background: var(--surface); }#tabTodo .mode-label { font-size: 0.82rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }#tabTodo .mode-opts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }#tabTodo .mode-card {
+    text-align: left; padding: var(--sp-3) var(--sp-4); border: 1.5px solid var(--border); border-radius: var(--r-md);
+    background: var(--surface-2); transition: all .16s var(--ease-out); display: flex; flex-direction: column; gap: 3px;
+  }#tabTodo .mode-card:hover { border-color: var(--faint); }#tabTodo .mode-card.sel { border-color: var(--loop); background: var(--loop-tint); }#tabTodo .mode-card .mc-top { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 0.92rem; color: var(--ink); }#tabTodo .mode-card .mc-top .ico { width: 15px; height: 15px; color: var(--loop); }#tabTodo .mode-card .mc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }#tabTodo .loop-preview { font-size: 0.84rem; color: var(--loop); background: var(--loop-tint); padding: 9px 12px; border-radius: var(--r-sm); line-height: 1.45; display: flex; gap: 8px; align-items: flex-start; }#tabTodo .loop-preview .ico { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+  @media (max-width: 480px) {#tabTodo .mode-opts { grid-template-columns: 1fr; } }#tabTodo .subs { padding: var(--sp-4) 0; border-top: 1px solid var(--border-soft); }#tabTodo .subs-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-2); }#tabTodo .subs-head .field-lbl { width: auto; }#tabTodo .subs-bar { height: 5px; background: var(--border-soft); border-radius: 3px; overflow: hidden; flex: 1; margin: 0 var(--sp-3); }#tabTodo .subs-bar span { display: block; height: 100%; background: var(--done); border-radius: 3px; transition: width .4s var(--ease-out); }#tabTodo .sub-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; }#tabTodo .sub-check { width: 18px; height: 18px; border: 2px solid var(--faint); border-radius: 5px; flex-shrink: 0; display: grid; place-items: center; color: white; transition: all .16s var(--ease-out); }#tabTodo .sub-check svg { width: 11px; height: 11px; opacity: 0; transition: opacity .16s; }#tabTodo .sub-item.done .sub-check { background: var(--done); border-color: var(--done); }#tabTodo .sub-item.done .sub-check svg { opacity: 1; }#tabTodo .sub-item input { flex: 1; font-size: 0.9rem; }#tabTodo .sub-item.done input { color: var(--faint); text-decoration: line-through; }#tabTodo .sub-item .sub-del { opacity: 0; color: var(--faint); padding: 3px; border-radius: 5px; transition: all .12s; }#tabTodo .sub-item:hover .sub-del { opacity: 1; }#tabTodo .sub-item .sub-del:hover { color: var(--p-high); }#tabTodo .sub-add { display: flex; align-items: center; gap: 10px; padding: 6px 0; color: var(--muted); }#tabTodo .sub-add .ico { width: 18px; height: 18px; }#tabTodo .sub-add input { flex: 1; font-size: 0.9rem; }#tabTodo .modal-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-5); border-top: 1px solid var(--border-soft);
+    background: var(--surface-2);
+  }#tabTodo .m-created { font-size: 0.78rem; color: var(--faint); }#tabTodo .btn-del {
+    display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: var(--r-md);
+    color: var(--p-high); font-weight: 500; font-size: 0.88rem; transition: background .14s;
+  }#tabTodo .btn-del:hover { background: var(--p-high-tint); }#tabTodo .foot-actions { display: flex; align-items: center; gap: var(--sp-2); }#tabTodo /* ============ TOAST ============ */
+  .toast-wrap { position: fixed; bottom: var(--sp-5); left: 50%; transform: translateX(-50%); z-index: var(--z-toast); display: flex; flex-direction: column; gap: var(--sp-2); align-items: center; }#tabTodo .toast {
+    display: flex; align-items: center; gap: var(--sp-3); background: var(--ink); color: #f8fafc;
+    padding: 11px var(--sp-3) 11px var(--sp-4); border-radius: var(--r-md); box-shadow: var(--sh-lg);
+    font-size: 0.88rem; animation: toastIn .35s var(--ease-out); max-width: 90vw;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }#tabTodo .toast button { color: var(--accent-tint-2); font-weight: 600; padding: 4px 10px; border-radius: 7px; transition: background .14s; white-space: nowrap; }#tabTodo .toast button:hover { background: rgba(255,255,255,0.12); }#tabTodo /* ============ DIALOG small ============ */
+  .mini-modal { width: min(360px, calc(100vw - 32px)); background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--sh-lg); padding: var(--sp-5); }#tabTodo .mini-modal h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 500; margin-bottom: var(--sp-4); }#tabTodo .mini-modal input[type=text] { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-md); font-size: 0.95rem; background: var(--surface-2); }#tabTodo .mini-modal input[type=text]:focus { border-color: var(--accent); background: var(--surface); }#tabTodo .swatches { display: flex; gap: 10px; margin: var(--sp-4) 0; }#tabTodo .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; transition: transform .12s; }#tabTodo .swatch:hover { transform: scale(1.12); }#tabTodo .swatch.sel { border-color: var(--ink); }#tabTodo .mini-actions { display: flex; gap: var(--sp-2); justify-content: flex-end; margin-top: var(--sp-2); }#tabTodo .btn { padding: 9px 18px; border-radius: var(--r-md); font-weight: 600; font-size: 0.9rem; transition: all .15s var(--ease-out); }#tabTodo .btn-ghost { color: var(--muted); }#tabTodo .btn-ghost:hover { background: var(--surface-2); color: var(--ink); }#tabTodo .btn-primary { background: var(--accent); color: white; display: inline-flex; align-items: center; gap: 7px; }#tabTodo .btn-primary:hover { background: var(--accent-hover); }#tabTodo .scrim { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: var(--z-drawer); opacity: 0; pointer-events: none; transition: opacity .25s; }#tabTodo .scrim.on { opacity: 1; pointer-events: auto; }
+
+  @keyframes taskFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }#tabTodo .task { animation: taskFade .3s var(--ease-out) backwards; }#tabTodo /* ============ RESPONSIVE ============ */
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .side {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 280px; z-index: calc(var(--z-drawer) + 1);
+      transform: translateX(-100%); transition: transform .32s var(--ease-out); box-shadow: var(--sh-lg);
+    }
+    .side.open { transform: none; }
+    .menu-btn { display: grid; }
+    .topbar { padding: var(--sp-4) var(--sp-4) var(--sp-3); }
+    .scroll { padding: var(--sp-4) var(--sp-4) var(--sp-8); }
+    .controls .sort .slbl { display: none; }
+    .search { max-width: none; }
+  }
+  @media (max-width: 520px) {#tabTodo .seg button { padding: 6px 9px; font-size: 0.8rem; }#tabTodo .progress-txt { display: none; }#tabTodo .t-actions { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {#tabTodo * { animation: none !important; transition-duration: .01ms !important; } }
+
+
+/* ====== TUGAS PRO — penyesuaian agar pas jadi tab ====== */
+#tabTodo { display:block; }
+/* Pastikan popup tambah/edit tugas & popup proyek selalu di tengah layar */
+#tabTodo dialog { margin: auto !important; }
+/* Sidebar proyek/filter Tugas Pro dijadikan popup mengambang (bukan kolom kiri-kanan) */
+#tabTodo .app { grid-template-columns: 1fr !important; }
+#tabTodo .side {
+    position: fixed !important; top: 50%; left: 50%; bottom: auto;
+    width: min(320px, 90vw); max-height: min(600px, 82vh);
+    display: flex; flex-direction: column; overflow-y: auto;
+    border-radius: var(--r-lg, 20px); z-index: 150;
+    transform: translate(-50%, -50%) scale(0.94); opacity: 0; pointer-events: none;
+    transition: transform .22s var(--ease-out), opacity .18s ease;
+    box-shadow: var(--sh-lg) !important; border: 1px solid var(--border-light);
+}
+#tabTodo .side.open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+#tabTodo .side .brand { position: relative; padding-right: 2.2rem; }
+#tabTodo .side-close-btn {
+    position: absolute; top: var(--sp-3, 12px); right: var(--sp-3, 12px);
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: var(--surface-2); color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all .15s var(--ease-out);
+}
+#tabTodo .side-close-btn:hover { background: var(--p-high-tint); color: var(--p-high); }
+#tabTodo .scrim { z-index: 149; }
+#tabTodo .menu-btn { display: grid !important; }
+#tabTodo .app {
+    height: min(680px, 72vh);
+    min-height: 440px;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: var(--sh-lg);
+    border: 1px solid var(--border-soft);
+}
+@media (max-width: 640px) {
+    #tabTodo .app { height: min(620px, 68vh); min-height: 400px; border-radius: var(--r-lg); }
+}
+
+/* Badge notifikasi kecil di ikon nav bawah */
+.nav-icon-wrap { position: relative; display: inline-flex; }
+.tp-nav-badge {
+    position: absolute; top: -6px; right: -9px;
+    min-width: 16px; height: 16px; padding: 0 3px;
+    background: var(--danger, #ef4444); color: #fff;
+    border-radius: 999px; font-size: 0.6rem; font-weight: 800;
+    display: none; align-items: center; justify-content: center;
+    line-height: 1; box-shadow: 0 0 0 2px var(--bg-surface);
+}
+.tp-nav-badge.show { display: flex; }
+
+/* ====== Popup Jadwal Hari Ini (mewah) ====== */
+#todoReminderPopup {
+    display: none; position: fixed; inset: 0; z-index: 9991;
+    align-items: flex-end; justify-content: center;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(2px);
+    padding-bottom: 80px;
+}
+#todoReminderPopup.show { display: flex; }
+#todoReminderPopup .trp-card {
+    background: var(--bg-card, var(--bg-surface)); border-radius: 24px 24px 20px 20px;
+    width: calc(100% - 2rem); max-width: 480px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    box-shadow: 0 -4px 40px rgba(0,0,0,0.25), 0 20px 60px rgba(184,83,42,0.18);
+    border: 1px solid var(--border-light);
+    animation: slideUpPopup 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    max-height: 78vh; display: flex; flex-direction: column;
+}
+#todoReminderPopup .trp-header { display: flex; align-items: flex-start; gap: 0.85rem; margin-bottom: 0.9rem; }
+#todoReminderPopup .trp-icon {
+    font-size: 1.6rem; width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px;
+    background: linear-gradient(135deg, #b8532a, #e0793f);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(184,83,42,0.35);
+}
+#todoReminderPopup .trp-title { font-weight: 800; font-size: 1.02rem; color: var(--text-main); margin: 0 0 0.15rem; }
+#todoReminderPopup .trp-sub { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+#todoReminderPopup .trp-close {
+    margin-left: auto; background: none; border: none; font-size: 1.2rem;
+    color: var(--text-muted); cursor: pointer; padding: 0.1rem 0.3rem; line-height: 1; border-radius: 6px; flex-shrink:0;
+}
+#todoReminderPopup .trp-close:hover { background: var(--bg-body); }
+#todoReminderPopup .trp-list { overflow-y: auto; margin: 0 -0.25rem 1rem; padding: 0 0.25rem; }
+#todoReminderPopup .trp-item {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.6rem 0.5rem; border-radius: 12px; margin-bottom: 0.3rem;
+    border: 1px solid var(--border-light); background: var(--bg-body);
+}
+#todoReminderPopup .trp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+#todoReminderPopup .trp-item-title { flex: 1; font-size: 0.86rem; font-weight: 600; color: var(--text-main); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#todoReminderPopup .trp-item-tag {
+    font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; flex-shrink: 0;
+}
+#todoReminderPopup .trp-item-tag.over { background: rgba(239,68,68,0.12); color: #ef4444; }
+#todoReminderPopup .trp-item-tag.today { background: rgba(184,83,42,0.12); color: #b8532a; }
+#todoReminderPopup .trp-empty { text-align: center; padding: 1.25rem 0.5rem; color: var(--text-muted); font-size: 0.85rem; }
+#todoReminderPopup .trp-dont-show { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.9rem; cursor: pointer; }
+#todoReminderPopup .trp-dont-show input { display: inline-block; accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+#todoReminderPopup .trp-dont-show span { font-size: 0.75rem; color: var(--text-muted); user-select: none; }
+.hpp-dont-show input { display: inline-block; accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+.hpp-dont-show span { user-select: none; }
